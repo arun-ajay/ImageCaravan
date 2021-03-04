@@ -1,0 +1,37 @@
+// .app {
+//     min-height: 100vh;
+//     /* background-image: url("./assets/background.jpg") ; */
+//     background: black
+//     background-repeat: no-repeat;
+//     background-position: center center fixed;
+//     -webkit-background-size: cover;
+//     -moz-background-size: cover;
+//     -o-background-size: cover;
+//     background-size: cover;
+//   }
+  
+  
+  .customGrid{
+    margin-left: 0rem !important;
+    margin-right: 0rem !important;
+    min-height: 100vh;
+    /* background-image: url("./assets/background.jpg") ; */
+    // background: #1a1c20;
+    background: #fcf1f1;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+  
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+  }
+  
+  .customRow{
+    padding: 0rem !important;
+  }
+  
+  .customColumn{
+    padding: 0rem !important;
+  
+  }
