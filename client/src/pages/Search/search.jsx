@@ -1,12 +1,12 @@
 import React,{Component} from 'react';
-import styles from './landing.module.scss';
+import styles from './search.module.scss';
 
 
 
 
 import {Grid,Card,Transition,Image,Container} from 'semantic-ui-react'
 
-export default class Landing extends Component{
+export default class Search extends Component{
 
     state = {
 
@@ -21,7 +21,7 @@ export default class Landing extends Component{
         
         return(
             <Grid.Row className = {styles.customRow}>
-                landing
+                Search
             </Grid.Row>
         )
     } 

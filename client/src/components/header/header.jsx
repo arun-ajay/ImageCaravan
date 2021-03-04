@@ -6,14 +6,15 @@ import {Link} from "react-router-dom";
 import CamelLogo from "components/header/assets/camel.jpg"
 import Travelers from "components/header/assets/travelers.jpg"
 
-import {Grid,Menu,Button,Card, Input, Image, TransitionablePortal,Icon} from 'semantic-ui-react'
+import {Grid,Menu,Button,Card, Input, Image, Label,TransitionablePortal,Icon} from 'semantic-ui-react'
 
 import {menuJson} from "./data"
 
 
 export default class SiteHeader extends Component{
     state = {
-        activeItem : null
+        activeItem : null,
+        signIn: true
     }
   
 
@@ -50,6 +51,14 @@ export default class SiteHeader extends Component{
             //  })
             // }
       }
+
+    changeLogin = () => {
+        this.setState({
+            signIn : !this.state.signIn
+        }, () => {
+            console.log("Sign In",this.state.signIn)
+        })
+    }
 
     handleItemClick = (e, { name }) => {
         this.setState({ activeItem: name });
@@ -129,51 +138,59 @@ export default class SiteHeader extends Component{
 
                                 }}
                                 trigger={
-                                    <Button className = {styles.upload}>
-                                      Sign Up
-                                    </Button>
-                                }
-                                >
-                                    <Card className = {styles.login}>
-                                        <Image src = {CamelLogo} wrapped ui = {false}/>
-                                        <Card.Content textAlign = {"center"}>
-                                            <Card.Header>Come join us!</Card.Header>
-                                        </Card.Content>
-                                        
-                                            <Card.Content extra textAlign = {"center"}>
-                                                <Button circular color='facebook' icon='facebook'  />
-                                                <Button circular color='twitter' icon='twitter' />
-                                                <Button circular color='linkedin' icon='linkedin' />
-                                                <Button circular color='google plus' icon='google' onClick = {() => this.visitAuth(process.env.REACT_APP_AUTH)} />
-                                            </Card.Content>
-                                    </Card>
-                                </TransitionablePortal>
-                            </Menu.Item>
-                            <Menu.Item>
-                                <TransitionablePortal
-                                transition={{
-                                    animation: 'zoom',
-                                    duration: 300
-
-                                }}
-                                trigger={
                                     <Button icon labelPosition='right' className = {styles.upload}>
-                                      Sign in
+                                        Log In
                                       <Icon name='sign in alternate' />
                                     </Button>
                                 }
                                 >
                                     <Card className = {styles.login}>
                                         <Image src = {Travelers} wrapped ui = {false}/>
-                                        <Card.Content textAlign = {"center"}>
-                                            <Card.Header>Welcome back traveler!</Card.Header>
-                                        </Card.Content>
-                                            <Card.Content extra textAlign = {"center"}>
-                                                <Button circular color='facebook' icon='facebook'  />
-                                                <Button circular color='twitter' icon='twitter' />
-                                                <Button circular color='linkedin' icon='linkedin' />
-                                                <Button circular color='google plus' icon='google' onClick = {() => this.visitAuth(process.env.REACT_APP_AUTH)} />
+                                        {
+                                            this.state.signIn ?
+                                            <Card.Content textAlign = {"center"}>
+                                                <Card.Header>Welcome back traveler!</Card.Header>
+                                                <br></br>
+                                                <Input icon='user circle' iconPosition='left' placeholder='Username' />
+                                                <br></br>
+                                                <br></br>
+                                                <Input icon='key' iconPosition='left' placeholder='Password' />
+                                                <br></br>
+                                                <br></br>
+                                                <Button compact circular icon = "upload" className = {styles.upload}>
+                                                    Log In
+                                                </Button>
+
                                             </Card.Content>
+                                            :
+                                            <Card.Content textAlign = {"center"}>
+                                                <Card.Header>Come join us!</Card.Header>
+                                                <br></br>
+                                                <Input icon='user circle' iconPosition='left' placeholder='Username' />
+                                                <br></br>
+                                                <br></br>
+                                                <Input icon='key' iconPosition='left' placeholder='Password' />
+                                                <br></br>
+                                                <br></br>
+                                                <Input icon='key' iconPosition='left' placeholder='Confirm Password' />
+                                                <br></br>
+                                                <br></br>
+                                                <Input icon='location arrow' iconPosition='left' placeholder='Location' />
+                                                <br></br>
+                                                <br></br>
+                                                <Button compact circular icon = "upload" className = {styles.upload}>
+                                                    Sign Up
+                                                </Button>
+
+                                            </Card.Content>
+                                        }
+                                        <Card.Content extra>
+                                            <Label as='a' color = 'orange' ribbon onClick = {this.changeLogin}>
+                                                Need an acccount?
+                                            </Label>
+
+                                        </Card.Content>
+
                                     </Card>
                                 </TransitionablePortal>
                             </Menu.Item>

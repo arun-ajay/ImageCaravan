@@ -12,13 +12,13 @@ export const menuJson = [
         "display": <span><Icon name = {"home"}/> Home </span>
     },
     {
-        "name": "Hashtag",
-        "to": "/hashtags",
+        "name": "Goods",
+        "to": "/goods",
         "display": <span><Icon name = {"hashtag"}/> Goods </span>
     },
     {
         "name": "Caravaners",
         "to": "/caravaners",
-        "display": <span><Icon name = {"user outline"}/> Caravaners </span>
+        "display": <span><Icon name = {"users"}/> Caravaners </span>
     }
 ]
