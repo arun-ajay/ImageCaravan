@@ -21,9 +21,11 @@ export default class Goods extends Component{
         
         return(
             <Grid.Row className = {styles.customRow}>
-                Selected Goods
-                <Divider></Divider>
-                All goods
+                <Grid.Column width = {2}/>
+                <Grid.Column width = {8}>
+                    Goods
+                </Grid.Column>
+                <Grid.Column width = {2}/>
             </Grid.Row>
         )
     } 

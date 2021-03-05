@@ -104,7 +104,6 @@ export default class SiteHeader extends Component{
                     <Menu borderless  className = {styles.customMenu}>
                         {menuArray}
  
-
                         <Menu.Item>
                             <TransitionablePortal
                             transition={{
@@ -184,13 +183,23 @@ export default class SiteHeader extends Component{
 
                                             </Card.Content>
                                         }
-                                        <Card.Content extra>
-                                            <Label as='a' color = 'orange' ribbon onClick = {this.changeLogin}>
-                                                Need an acccount?
-                                            </Label>
-
-                                        </Card.Content>
-
+                                        {
+                                            this.state.signIn ?
+                                            <Card.Content extra>
+                                                <Label as='a' color = 'orange' ribbon onClick = {this.changeLogin}>
+                                                    Need an acccount?
+                                                </Label>
+    
+                                            </Card.Content>
+                                            :
+                                            <Card.Content extra>
+                                                <Label as='a' color = 'orange' ribbon onClick = {this.changeLogin}>
+                                                    Go back to sign in
+                                                </Label>
+    
+                                            </Card.Content>
+                                            
+                                        }
                                     </Card>
                                 </TransitionablePortal>
                             </Menu.Item>

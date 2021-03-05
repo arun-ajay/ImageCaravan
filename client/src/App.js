@@ -26,7 +26,7 @@ class App extends Component {
             <Route component = {Header}/>
             <Switch>
                 <Route exact path = "/" component = {Landing}/>
-                <Route exact path = "/caravaners" component = {Caravaners}/>
+                <Route exact path = "/caravanners" component = {Caravaners}/>
                 <Route exact path = "/goods" component = {Goods}/>
                 <Route exact path = "/search" component = {Search}/>
                 <Redirect from = "/home" to = "/"/>

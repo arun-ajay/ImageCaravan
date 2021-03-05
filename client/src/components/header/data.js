@@ -17,8 +17,8 @@ export const menuJson = [
         "display": <span><Icon name = {"hashtag"}/> Goods </span>
     },
     {
-        "name": "Caravaners",
-        "to": "/caravaners",
-        "display": <span><Icon name = {"users"}/> Caravaners </span>
+        "name": "Caravanners",
+        "to": "/caravanners",
+        "display": <span><Icon name = {"users"}/> Caravanners </span>
     }
 ]

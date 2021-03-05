@@ -21,7 +21,11 @@ export default class Landing extends Component{
         
         return(
             <Grid.Row className = {styles.customRow}>
-                landing
+                <Grid.Column width = {2}/>
+                <Grid.Column width = {8}>
+                    Landing
+                </Grid.Column>
+                <Grid.Column width = {2}/>
             </Grid.Row>
         )
     } 

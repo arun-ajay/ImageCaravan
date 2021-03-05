@@ -21,7 +21,11 @@ export default class Search extends Component{
         
         return(
             <Grid.Row className = {styles.customRow}>
-                Search
+                <Grid.Column width = {2}/>
+                <Grid.Column width = {8}>
+                    Search
+                </Grid.Column>
+                <Grid.Column width = {2}/>
             </Grid.Row>
         )
     } 
