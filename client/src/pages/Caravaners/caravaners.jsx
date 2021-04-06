@@ -121,8 +121,8 @@ export default class Caravaners extends Component{
         return(
             <Grid.Row className = {styles.customRow}>
                 <Grid.Column width = {3}/>
-                <Grid.Column width = {10}>
-                    <Card.Group stackable itemsPerRow = {3}>
+                <Grid.Column only = {"computer"} width = {10}>
+                    <Card.Group stackable itemsPerRow = {2}>
                         {cardArray}
                     </Card.Group>
                 </Grid.Column>

@@ -3,10 +3,9 @@ import styles from  "components/header/header.module.scss"
 
 
 import {Link} from "react-router-dom";
-import CamelLogo from "components/header/assets/camel.jpg"
 import Travelers from "components/header/assets/travelers.jpg"
 
-import {Grid,Menu,Button,Card, Input, Image, Label,TransitionablePortal,Icon} from 'semantic-ui-react'
+import {Grid,Menu,Button,Card, Input, Image, Label,TransitionablePortal,Icon,Form,Dropdown} from 'semantic-ui-react'
 
 import {menuJson} from "./data"
 
@@ -14,10 +13,77 @@ import {menuJson} from "./data"
 export default class SiteHeader extends Component{
     state = {
         activeItem : null,
-        signIn: true
+        signIn: true,
+        searchValue: null,
+        goods : [
+            {
+                "key": 0,
+                "text": "#dogs",
+                "value": "dogs"
+            },
+            {
+                "key": 1,
+                "text": "#cats",
+                "value": "cats"
+            },
+            {
+                "key": 2,
+                "text": "#birds",
+                "value": "birds"
+            },
+            {
+                "key": 3,
+                "text": "#squirrels",
+                "value": "squirrels"
+            },
+
+        ]
+    }
+
+    updateSelection = (e,{value}) => {
+        console.log(value)
+        this.props.history.push('/search')
+
+    }
+
+    getGoods = () => {
+        return [
+            {
+                "key": 0,
+                "text": "#dogs",
+                "value": "dogs"
+            },
+            {
+                "key": 1,
+                "text": "#cats",
+                "value": "cats"
+            },
+            {
+                "key": 2,
+                "text": "#birds",
+                "value": "birds"
+            },
+            {
+                "key": 3,
+                "text": "#birds",
+                "value": "birds"
+            },
+
+        ]
+    }
+
+    getSearchValue = () => {
+        return this.state.searchValue
     }
   
-
+    handleChange = (e) => {
+        console.log("event",e.eventPhase)
+        this.setState({
+            searchValue: e.eventPhase
+        }, () => {
+            console.log(this.state.searchValue)
+        })
+    }
 
     uploadFile = event => {
     
@@ -208,12 +274,30 @@ export default class SiteHeader extends Component{
                 </Grid.Column>
                 <Grid.Column width = {4}/>
                 <Grid.Column width = {8} className = {styles.customColumn}>
-
-                                <Input
+                    {/* <Form>
+                        <Form.Field>
+                                <Form.Input
                                 fluid
                                     icon={<Icon name='find' inverted circular link />}
                                 placeholder='Check out our wares'
+                                value = {this.state.searchValue}
+                                onChange = {(e) => {
+                                    this.handleChange(e)
+                                }}
                                 />
+                        </Form.Field>
+                    </Form> */}
+
+                    <Dropdown
+                        placeholder='Select your search term(s)'
+                        fluid
+                        multiple
+                        search
+                        selection
+                        className = {styles.dropdown}
+                        options={this.state.goods}
+                        onChange = {this.updateSelection.bind(this)}
+                    />
 
                 </Grid.Column>
             </Grid.Row>
