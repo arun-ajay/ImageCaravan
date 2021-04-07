@@ -1,82 +1,48 @@
 import React,{Component} from 'react';
 import styles from './caravaners.module.scss';
-import Caravanner from "pages/Caravaners/assets/caravanner.jpg";
 
+import {getAllProfiles} from "utils/api"
 
-
-import {Grid,Card,Transition,Image,Icon} from 'semantic-ui-react'
+import {Grid,Card,Transition,Image,Icon,Flag,Label} from 'semantic-ui-react'
 
 export default class Caravaners extends Component{
 
     state = {
-
+        profileData : [],
         open : false
     }
 
-
-    componentDidMount(){
-        this.setState({
-            open: true
+    apiGetAllProfiles = () => {
+        getAllProfiles().then((response) => {
+            if(response.status === 200){
+                this.setState({
+                    profileData : response.data["getAllProfiles"]
+                }, () => {
+                    this.setState({
+                        open : true
+                    })
+                })
+            }
         })
+    }
+
+
+    async componentDidMount(){
+        this.apiGetAllProfiles()
     }
     render () { 
 
-        var projectData = [
-            {
-                'username': ' Joses Farrell ',
-                'followerCount': 12,
-                'bio': "Award-winning twitter nerd. Introvert. Future teen idol. Beer fanatic. Lifelong bacon maven. Hardcore student. Proud tv fan.",
-                'followingCount': 15,
-                'imagesUploaded': 17
-            },
-            {
-                'username': ' Marita Anona ',
-                'followerCount': 30,
-                'bio': "Typical thinker. Total internet guru. Extreme tv ninja. Bacon evangelist.",
-                'followingCount': 81,
-                'imagesUploaded': 65
-            },
-            {
-                'username': ' Diarmaid Eliav ',
-                'followerCount': 5,
-                'bio': "Friendly entrepreneur. Gamer. Award-winning zombie ninja. Travel practitioner. Thinker. General web fanatic.",
-                'followingCount': 200,
-                'imagesUploaded': 2
-            },
-            {
-                'username': ' Eha Daphné ',
-                'followerCount': 16,
-                'bio': "Coffee lover. Falls down a lot. Freelance entrepreneur. Total twitter fan. Music trailblazer. Travel specialist.",
-                'followingCount': 20,
-                'imagesUploaded': 87
-            },
-            {
-                'username': ' Cleve Stuart ',
-                'followerCount': 99,
-                'bio': "Internet fanatic. Hipster-friendly beer practitioner. General coffee fan. Food ninja. Certified twitter fanatic.",
-                'followingCount': 11,
-                'imagesUploaded': 305
-            },
-            {
-                'username': ' Wöllem Ainura ',
-                'followerCount': 74,
-                'bio': "Avid zombieaholic. Friendly problem solver. Music practitioner. Thinker. Bacon fan. Devoted web junkie.",
-                'followingCount': 20,
-                'imagesUploaded': 66
-            },
-        ]
-
-        var cardArray = projectData.map((data,index) => {
+        var cardArray = this.state.profileData.map((data,index) => {
             return  <Transition
                  animation = "fade down"
                  duration = {500+(index)*100}
                  visible = {this.state.open}
              >
-                 <Card>
-                     <Image src = {Caravanner} wrapped ui = {false}/>
+                 <Card as = 'a' fluid>
+                     <Image src = {`data:image/jpeg;base64,${data["profilePicture"]}`} wrapped ui = {false}/>
                      <Card.Content textAlign = {"center"}>
                          <Card.Header>
-                             {data.username}
+                             {data["username"]}{' '}<Flag name = {data["location"]}/> 
                          </Card.Header>
                          <Card.Meta>
                              <Grid>
@@ -84,7 +50,7 @@ export default class Caravaners extends Component{
                                     <Grid.Column width = {2}/>
                                     <Grid.Column width = {4}>
 
-                                            {data.followerCount} 
+                                            {data["followers"]} 
                                             <br></br>
                                             Followers
 
@@ -92,7 +58,7 @@ export default class Caravaners extends Component{
                                     <Grid.Column width = {4}>
 
 
-                                            {data.followingCount} 
+                                            {data["following"]} 
                                             <br></br>
                                             Following
 
@@ -100,7 +66,7 @@ export default class Caravaners extends Component{
                                     <Grid.Column width = {4}>
 
                                             
-                                            {data.imagesUploaded} 
+                                            {data["imageCount"]} 
                                             <br></br>
                                             Images 
 
@@ -112,21 +78,47 @@ export default class Caravaners extends Component{
 
                          </Card.Meta>
                          <Card.Description>
-                             {data.bio}
+                             {data["bio"]}
                          </Card.Description>
                      </Card.Content>
                  </Card>
              </Transition>
          })
+
+         var first = cardArray.map((data,index) => {
+             if ((index + 1) % 3 == 1){
+                 return data
+             }
+         })
+         var second = cardArray.map((data,index) => {
+             if ((index + 1) % 3 == 2){
+                 return data
+             }
+         })
+         var third = cardArray.map((data,index) => {
+             if ((index + 1) % 3 == 0){
+                 return data
+             }
+         })
         return(
             <Grid.Row className = {styles.customRow}>
-                <Grid.Column width = {3}/>
-                <Grid.Column only = {"computer"} width = {10}>
-                    <Card.Group stackable itemsPerRow = {2}>
-                        {cardArray}
-                    </Card.Group>
-                </Grid.Column>
-                <Grid.Column width = {3}/>
+            
+            <Grid.Column width = {2} />
+            <Grid.Column width = {4} >
+                    {first}
+             
+            </Grid.Column>
+            <Grid.Column width = {4}>
+        
+                    {second}
+             
+            </Grid.Column>
+            <Grid.Column width = {4}>
+        
+                    {third}
+             
+            </Grid.Column>
+            <Grid.Column width = {2}/>
             </Grid.Row>
         )
     } 

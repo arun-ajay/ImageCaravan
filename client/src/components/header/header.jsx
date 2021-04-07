@@ -274,6 +274,7 @@ export default class SiteHeader extends Component{
                 </Grid.Column>
                 <Grid.Column width = {4}/>
                 <Grid.Column width = {8} className = {styles.customColumn}>
+                    <br></br>
                     {/* <Form>
                         <Form.Field>
                                 <Form.Input
