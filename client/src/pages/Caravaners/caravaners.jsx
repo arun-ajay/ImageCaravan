@@ -1,5 +1,6 @@
 import React,{Component} from 'react';
 import styles from './caravaners.module.scss';
+import {Redirect} from 'react-router';
 
 import {getAllProfiles} from "utils/api"
 
@@ -9,7 +10,9 @@ export default class Caravaners extends Component{
 
     state = {
         profileData : [],
-        open : false
+        open : false,
+        redirect : false,
+        username: null
     }
 
     apiGetAllProfiles = () => {
@@ -26,11 +29,23 @@ export default class Caravaners extends Component{
         })
     }
 
+    visitProfile = (username) => {
+        this.setState({
+            username: username,
+            redirect: true
+        })
+
+    }
+
 
     async componentDidMount(){
         this.apiGetAllProfiles()
     }
     render () { 
+
+        if (this.state.redirect){
+            return <Redirect push to = {"/profile?username=" + this.state.username}/>
+        }
 
         var cardArray = this.state.profileData.map((data,index) => {
             return  <Transition
@@ -38,7 +53,7 @@ export default class Caravaners extends Component{
                  duration = {500+(index)*100}
                  visible = {this.state.open}
              >
-                 <Card as = 'a' fluid>
+                 <Card as = 'a' fluid  onClick = {() => this.visitProfile(data["username"])}>
                      <Image src = {`data:image/jpeg;base64,${data["profilePicture"]}`} wrapped ui = {false}/>
                      <Card.Content textAlign = {"center"}>
                          <Card.Header>

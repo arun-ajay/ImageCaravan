@@ -7,8 +7,11 @@ const getHashtags = (params) => getAPI('/gethashtags',params)
 
 const getAllProfiles = (params) => getAPI('/getallprofiles',params)
 
+const getProfile = (params) => getAPI('/getprofile',params)
+
 export {
     getRandomImages,
     getHashtags,
-    getAllProfiles
+    getAllProfiles,
+    getProfile
 }

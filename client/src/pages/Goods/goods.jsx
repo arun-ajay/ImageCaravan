@@ -36,7 +36,6 @@ export default class Goods extends Component{
     apiGetHashtags = () => {
 
         getHashtags().then((response) => {
-            console.log(response.data)
             if (response.status === 200){
                 this.setState({
                     hashtags: response.data["getAllHashtags"]
@@ -59,7 +58,6 @@ export default class Goods extends Component{
     render () { 
 
         var labelArray = this.state.hashtags.map((data,index) => {
-            console.log(data["hashtag"])
             return <Transition  animation = {this.state.animation[index % 4]} duration = {500+(index)*100} visible = {this.state.open}>
             
             <Label as = 'a'  color = {this.state.colors[index % 13 ]} >
