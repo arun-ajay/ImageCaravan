@@ -210,12 +210,12 @@ def getprofile():
         print("REQUEST DATA",request)
         username = request.args.get('username')
         print("USERNAME",username)
-        response = None
+        response = {}
         for data in allProfiles():
             if data["username"] == username:
                 response = data
+                response["comments"] = returnComments()
                 break
-        response["comments"] = returnComments()
         
 
         return build_actual_response(jsonify(response))
