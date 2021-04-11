@@ -11,8 +11,9 @@ import Caravaners from "pages/Caravaners/caravaners";
 import Goods from "pages/Goods/goods";
 import Search from "pages/Search/search";
 import Profile from "pages/Profile/profile";
+import Ware from "pages/Ware/ware";
 import React,{Component} from 'react';
-
+import {v1 as uuid} from "uuid";
 import {Grid} from 'semantic-ui-react';
 class App extends Component {
 
@@ -30,7 +31,8 @@ class App extends Component {
                 <Route exact path = "/caravanners" component = {Caravaners}/>
                 <Route exact path = "/goods" component = {Goods}/>
                 <Route exact path = "/search" component = {Search}/>
-                <Route path = "/profile" component = {Profile}/>
+                <Route path = "/profile" render = {props => <Profile keyProp = {props.match.params.term} key = {uuid()} {...props}/>}/>
+                <Route path = "/image" render = {props => <Ware keyProp = {props.match.params.term} key = {uuid()} {...props}/>}/>
                 <Redirect from = "/home" to = "/"/>
                 <Redirect from = "/*"  to = "/"/>
             </Switch>

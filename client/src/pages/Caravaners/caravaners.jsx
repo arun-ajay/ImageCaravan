@@ -54,7 +54,7 @@ export default class Caravaners extends Component{
                  visible = {this.state.open}
              >
                  <Card as = 'a' fluid  onClick = {() => this.visitProfile(data["username"])}>
-                     <Image src = {`data:image/jpeg;base64,${data["profilePicture"]}`} wrapped ui = {false}/>
+                     <Image  src = {`data:image/jpeg;base64,${data["profilePicture"]}`}/>
                      <Card.Content textAlign = {"center"}>
                          <Card.Header>
                              {data["username"]}{' '}<Flag name = {data["location"]}/> 

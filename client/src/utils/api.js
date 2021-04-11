@@ -9,9 +9,12 @@ const getAllProfiles = (params) => getAPI('/getallprofiles',params)
 
 const getProfile = (params) => getAPI('/getprofile',params)
 
+const getImage = (params) => getAPI('/getimage',params)
+
 export {
     getRandomImages,
     getHashtags,
     getAllProfiles,
-    getProfile
+    getProfile,
+    getImage
 }

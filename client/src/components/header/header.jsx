@@ -15,7 +15,7 @@ export default class SiteHeader extends Component{
         activeItem : null,
         signIn: true,
         searchValue: null,
-        goods : [
+        options : [
             {
                 "key": 0,
                 "text": "#dogs",
@@ -296,7 +296,7 @@ export default class SiteHeader extends Component{
                         search
                         selection
                         className = {styles.dropdown}
-                        options={this.state.goods}
+                        options={this.state.options}
                         onChange = {this.updateSelection.bind(this)}
                     />
 
