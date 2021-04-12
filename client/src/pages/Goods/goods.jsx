@@ -3,6 +3,7 @@ import styles from './goods.module.scss';
 
 import {getHashtags} from "utils/api"
 import bazaar from "pages/Goods/assets/bazaar.png"
+import {Redirect} from 'react-router';
 
 import {Grid,Card,Transition,Image,Container,Divider,Header,Icon, Label} from 'semantic-ui-react'
 
@@ -13,6 +14,8 @@ export default class Goods extends Component{
 
         hashtags : [],
         open : false,
+        redirect: false,
+        hash: null,
         colors : [
             'red',
             'orange',
@@ -52,15 +55,27 @@ export default class Goods extends Component{
         })
     }
 
+    visitHash = (hash) => {
+        this.setState({
+            hash: hash,
+            redirect: true
+        })
+
+    }
+
     async componentDidMount(){
         this.apiGetHashtags()
     }
     render () { 
 
+        if (this.state.redirect){
+            return <Redirect push to = {"/search?searchType=hash&values=" + this.state.hash}/>
+        }
+
         var labelArray = this.state.hashtags.map((data,index) => {
             return <Transition  animation = {this.state.animation[index % 4]} duration = {500+(index)*100} visible = {this.state.open}>
             
-            <Label as = 'a'  color = {this.state.colors[index % 13 ]} >
+            <Label as = 'a'  color = {this.state.colors[index % 13 ]} onClick = {() => this.visitHash(data["hashtag"])} >
                 <Icon name = 'hashtag'/>
                 {data["hashtag"]}     
                 <Label.Detail>

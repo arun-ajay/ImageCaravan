@@ -1,8 +1,7 @@
 import React,{Component} from 'react';
 import styles from './profile.module.scss';
-import {Redirect,Link} from 'react-router';
+import {Redirect} from 'react-router';
 import queryString from 'query-string';
-import {v1 as uuid} from "uuid";
 
 import {getProfile} from "utils/api";
 
@@ -52,8 +51,8 @@ export default class Profile extends Component{
             if(response.status === 200){
                 this.setState({
                     profileData : response.data["profileData"],
-                    commentData : response.data["comments"],
-                    imageData :   response.data["imageData"]
+                    commentData : response.data["profileData"]["comments"],
+                    imageData :   response.data["profileData"]["imageData"]
                 }, () => {
                     this.setState({
                         open: true
@@ -273,7 +272,7 @@ export default class Profile extends Component{
                             </Grid>
                         :
                         <Loader size = 'large' active inline = 'centered'>
-                            Calling your traveler...
+                            Signaling traveler...
                         </Loader>
 
                     }

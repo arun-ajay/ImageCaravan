@@ -30,7 +30,7 @@ class App extends Component {
                 <Route exact path = "/" component = {Landing}/>
                 <Route exact path = "/caravanners" component = {Caravaners}/>
                 <Route exact path = "/goods" component = {Goods}/>
-                <Route exact path = "/search" component = {Search}/>
+                <Route exact path = "/search" render = {props => <Search keyProp = {props.match.params.term} key = {uuid()} {...props}/>}/>
                 <Route path = "/profile" render = {props => <Profile keyProp = {props.match.params.term} key = {uuid()} {...props}/>}/>
                 <Route path = "/image" render = {props => <Ware keyProp = {props.match.params.term} key = {uuid()} {...props}/>}/>
                 <Redirect from = "/home" to = "/"/>

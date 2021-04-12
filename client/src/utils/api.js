@@ -11,10 +11,19 @@ const getProfile = (params) => getAPI('/getprofile',params)
 
 const getImage = (params) => getAPI('/getimage',params)
 
+const getAllProfileUsernames = (params) => getAPI('/getallprofileusernames',params)
+
+const getAllImageTitles = (params) => getAPI('/getallimagetitles',params)
+
+const search = (params) => getAPI('/search',params)
+
 export {
     getRandomImages,
     getHashtags,
     getAllProfiles,
     getProfile,
-    getImage
+    getImage,
+    getAllProfileUsernames,
+    getAllImageTitles,
+    search
 }

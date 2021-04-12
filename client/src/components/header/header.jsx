@@ -1,9 +1,13 @@
 import React,{Component} from 'react';
 import styles from  "components/header/header.module.scss"
+import {Redirect} from 'react-router';
 
 
 import {Link} from "react-router-dom";
 import Travelers from "components/header/assets/travelers.jpg"
+import queryString from 'query-string';
+
+import {getAllProfileUsernames,getAllImageTitles,getHashtags} from "utils/api";
 
 import {Grid,Menu,Button,Card, Input, Image, Label,TransitionablePortal,Icon,Form,Dropdown} from 'semantic-ui-react'
 
@@ -14,30 +18,13 @@ export default class SiteHeader extends Component{
     state = {
         activeItem : null,
         signIn: true,
-        searchValue: null,
-        options : [
-            {
-                "key": 0,
-                "text": "#dogs",
-                "value": "dogs"
-            },
-            {
-                "key": 1,
-                "text": "#cats",
-                "value": "cats"
-            },
-            {
-                "key": 2,
-                "text": "#birds",
-                "value": "birds"
-            },
-            {
-                "key": 3,
-                "text": "#squirrels",
-                "value": "squirrels"
-            },
-
-        ]
+        searchType: '',
+        searchQuery: [],
+        hashtags : [],
+        imageTitles: [],
+        usernames: [],
+        options : [],
+        redirect: false
     }
 
     updateSelection = (e,{value}) => {
@@ -72,16 +59,68 @@ export default class SiteHeader extends Component{
         ]
     }
 
+    apiGetProfileNames = () => {
+        const queryStringParameters = queryString.parse(this.props.location.search)
+        
+        var params = {
+            "params": queryStringParameters
+
+        }
+        getAllProfileUsernames(params).then((response) => {
+            if(response.status === 200){
+                this.setState({
+                    usernames : response.data["getAllProfileUsernames"]
+                })
+            }
+        })  
+    }
+
+    apiGetHashtags = () => {
+        const queryStringParameters = queryString.parse(this.props.location.search)
+        
+        var params = {
+            "params": queryStringParameters
+
+        }
+        getHashtags(params).then((response) => {
+            if(response.status === 200){
+                this.setState({
+                    hashtags : response.data["getAllHashtags"]
+                })
+            }
+        })  
+    }
+
+    apiGetAllImageTitles = () => {
+        const queryStringParameters = queryString.parse(this.props.location.search)
+        
+        var params = {
+            "params": queryStringParameters
+
+        }
+        getAllImageTitles(params).then((response) => {
+            if(response.status === 200){
+                this.setState({
+                    imageTitles : response.data["getAllImageTitles"]
+                })
+            }
+        })  
+    }
+
+    searchImage = () => {
+        this.setState({
+            redirect: true
+        })
+    }
+
     getSearchValue = () => {
         return this.state.searchValue
     }
   
-    handleChange = (e) => {
-        console.log("event",e.eventPhase)
+    adjustQuery = (e,{value}) => {
+        console.log("VALUE",value)
         this.setState({
-            searchValue: e.eventPhase
-        }, () => {
-            console.log(this.state.searchValue)
+            searchQuery: value
         })
     }
 
@@ -128,7 +167,50 @@ export default class SiteHeader extends Component{
 
     handleItemClick = (e, { name }) => {
         this.setState({ activeItem: name });
-        console.log("redirecting");
+    }
+
+    changeSearchType = (e,{value}) => {
+        this.setState({
+            searchType: value,
+            searchQuery: []
+        }, () => {
+            if (this.state.searchType == "user"){
+                this.setState({
+                    options: this.state.usernames.map((data,index) => {
+                        return {
+                            key: index,
+                            value: data["username"],
+                            text: <span><Icon color = 'orange'  name='user circle' /> {data["username"]} </span>
+                        }
+                    }),
+                   searchQuery: [] 
+                    })
+            }
+            else if (this.state.searchType == "hash"){
+                this.setState({
+                    options: this.state.hashtags.map((data,index) => {
+                        return {
+                            key: index,
+                            value: data["hashtag"],
+                            text: <span><Icon color = 'orange'  name='hashtag' /> {data["hashtag"]} </span>
+                        }
+                    }),
+                    searchQuery: [] 
+                })
+            }
+            else if (this.state.searchType == "image"){
+                this.setState({
+                    options: this.state.imageTitles.map((data,index) => {
+                        return {
+                            key: index,
+                            value: data["imageUUID"],
+                            text: <span><Icon color = 'orange'  name='image' /> {data["imageTitle"]} </span>
+                        }
+                    }),
+                    searchQuery: [] 
+                })
+            }
+        })
     }
 
     componentDidMount(){
@@ -139,9 +221,52 @@ export default class SiteHeader extends Component{
         }
         this.setState({
             activeItem: path
+        }, () => {
+            this.apiGetProfileNames()
+            this.apiGetAllImageTitles()
+            this.apiGetHashtags()
         })
+
     }
     render () { 
+
+        if (this.state.redirect){
+            if (this.state.searchType && this.state.searchQuery){
+                var queryURL = "?searchType" + "=" + this.state.searchType + "&values="
+                var values = ""
+                for(var i=0; i < this.state.searchQuery.length; i++){
+                    values += this.state.searchQuery[i]
+                    if (i + 1 != this.state.searchQuery.length){
+                        values += ","
+                    }
+                } 
+                queryURL += values
+                window.location.assign("http://localhost:3000/search"+queryURL)
+            }
+            else{
+                this.setState({
+                    redirect: false
+                })
+            }
+        }
+
+        const options = [
+            { 
+                key: 1, 
+                text: <span><Icon color = 'orange'  name='hashtag' /> Good </span>, 
+                value: "hash" 
+            },
+            { 
+                key: 2, 
+                text: <span><Icon color = 'orange'  name='user circle' /> Carvanner </span>, 
+                value: "user" 
+            },
+            { 
+                key: 3, 
+                text: <span><Icon color = 'orange'  name='image' /> Image </span>, 
+                value: "image" 
+            }
+          ]
         const {activeItem} = this.state
         var menuArray = menuJson.map((data,index) => {
             if (data.hasOwnProperty("name")){
@@ -273,33 +398,30 @@ export default class SiteHeader extends Component{
                     </Menu>
                 </Grid.Column>
                 <Grid.Column width = {4}/>
-                <Grid.Column width = {8} className = {styles.customColumn}>
+                <Grid.Column  width = {8} className = {styles.customColumn}>
                     <br></br>
-                    {/* <Form>
-                        <Form.Field>
-                                <Form.Input
-                                fluid
-                                    icon={<Icon name='find' inverted circular link />}
-                                placeholder='Check out our wares'
-                                value = {this.state.searchValue}
-                                onChange = {(e) => {
-                                    this.handleChange(e)
-                                }}
-                                />
-                        </Form.Field>
-                    </Form> */}
-
-                    <Dropdown
-                        placeholder='Select your search term(s)'
-                        fluid
-                        multiple
-                        search
-                        selection
-                        className = {styles.dropdown}
-                        options={this.state.options}
-                        onChange = {this.updateSelection.bind(this)}
-                    />
-
+                    <Menu borderless>
+                        <Dropdown
+                            clearable
+                            fluid
+                            multiple
+                            search
+                            selection
+                            options={this.state.options}
+                            onChange = {this.adjustQuery}
+                            placeholder = 'Choose from our vast selection!'
+                        />
+                        <Dropdown onChange = {this.changeSearchType}  clearable selection options={options} placeholder='Search by...' />
+                    </Menu>
+                </Grid.Column>
+                <Grid.Column verticalAlign = {"bottom"}  width = {4} >
+                    {
+                        (this.state.searchType.length && this.state.searchQuery.length) ?
+                        
+                        <Button size = 'big' color = 'orange' circular icon = 'search' onClick = {() => this.searchImage()}/>
+                        :
+                        <Button size = 'big' color = 'orange' disabled circular icon = 'search'/>
+                    }
                 </Grid.Column>
             </Grid.Row>
         )

@@ -19,6 +19,7 @@ export default class Ware extends Component{
         open : false,
         redirect: false,
         username : null,
+        hash: null,
         animations: ["swing right", "swing down", "swing left"],
         colors : [
             'red',
@@ -72,6 +73,14 @@ export default class Ware extends Component{
 
     }
 
+    visitHash = (hash) => {
+        this.setState({
+            hash: hash,
+            redirect: true
+        })
+
+    }
+
 
 
 
@@ -83,6 +92,16 @@ export default class Ware extends Component{
     render () {
 
         if (this.state.redirect){
+            if(this.state.username){
+                return <Redirect push to = {"/profile?username=" + this.state.username}/>
+            }
+            else if (this.state.hash){
+                return <Redirect push to = {"/search?searchType=hash&values=" + this.state.hash}/>
+
+            }
+        }
+
+        if (this.state.redirect){
 
             return <Redirect push to = {"/profile?username=" + this.state.username}/>
         }
@@ -90,7 +109,7 @@ export default class Ware extends Component{
         var labelArray = this.state.hashtagData.map((data,index) => {
             return <Transition  animation = {this.state.animations[index % 4]} duration = {500+(index)*100} visible = {this.state.open}>
             
-            <Label as = 'a'  color = {this.state.colors[index % 13 ]} >
+            <Label onClick = {() => this.visitHash(data["hashtag"])}  as = 'a'  color = {this.state.colors[index % 13 ]} >
                 <Icon name = 'hashtag'/>
                 {data["hashtag"]}     
                 <Label.Detail>

@@ -57,6 +57,33 @@ def returnImageComments():
 
     return imageComments
 
+account = [
+    {
+        "username": "MaritaAnona",
+        "password": "abcdefg",
+        "followList": ["JosesFarrell","Epha","Cleve"]
+    },
+    {
+        "username": "JosesFarrell",
+        "password": "abcdefg",
+        "followList": ["MaritaAnona","Epha","Cleve"]
+    },
+    {
+        "username": "Cleve",
+        "password": "abcdefg",
+        "followList": ["JosesFarrell","Epha"]
+    },
+    {
+        "username": "Wollem",
+        "password": "abcdefg",
+        "followList": ["JosesFarrell","Epha","Cleve"]
+    },
+    {
+        "username": "Epha",
+        "password": "abcdefg",
+        "followList": ["JosesFarrell","Wollem","Cleve"]
+    },
+]
 
 
 profiles = [
@@ -341,7 +368,7 @@ def randomimagecollection():
         response =  {
             "RandomImageCollection": returnImages()
         }
-        return build_actual_response(jsonify(response))
+        return build_actual_response(jsonify(response)),200
 
     
 
@@ -354,9 +381,35 @@ def gethashtags():
             "getAllHashtags": returnHashtags()
         }
 
-        return build_actual_response(jsonify(response))
+        return build_actual_response(jsonify(response)),200
 
+@app.route('/getallprofileusernames',methods = ["OPTIONS","GET"])
+def getallprofileusernames():
+    if request.method == "OPTIONS":
+        return build_preflight_response
+    elif request.method == "GET":
+        response = {"getAllProfileUsernames": []}
 
+        for profile in allProfiles():
+            response["getAllProfileUsernames"].append({
+                "username" : profile["username"],
+                "imageCount": profile["imageCount"]
+            })
+        return build_actual_response(jsonify(response)),200
+
+@app.route('/getallimagetitles',methods = ["OPTIONS","GET"])
+def getallimagetitles():
+    if request.method == "OPTIONS":
+        return build_preflight_response
+    elif request.method == "GET":
+        response = {"getAllImageTitles": []}
+
+        for data in returnImages():
+            response["getAllImageTitles"].append({
+                "imageTitle" : data["imageTitle"],
+                "imageUUID": data["imageUUID"]
+            })
+        return build_actual_response(jsonify(response)),200
 
 @app.route('/getallprofiles')
 def getallprofiles():
@@ -367,7 +420,7 @@ def getallprofiles():
             "getAllProfiles": allProfiles()
         }
 
-        return build_actual_response(jsonify(response))
+        return build_actual_response(jsonify(response)),200
 
 
 @app.route('/getprofile', methods = ["OPTIONS","GET"])
@@ -383,12 +436,12 @@ def getprofile():
         for data in allProfiles():
             if data["username"] == username:
                 response["profileData"] = data
-                response["comments"] = returnProfileComments()
-                response["imageData"] = returnImages()
+                response["profileData"]["comments"] = returnProfileComments()
+                response["profileData"]["imageData"] = returnImages()
                 break
         
 
-        return build_actual_response(jsonify(response))
+        return build_actual_response(jsonify(response)),200
 
 
 @app.route('/getimage', methods = ["OPTIONS","GET"])
@@ -409,8 +462,34 @@ def getimage():
                 break
         
 
-        return build_actual_response(jsonify(response))
+        return build_actual_response(jsonify(response)),200
 
+
+@app.route('/search', methods = ["OPTIONS","GET"])
+def search():
+
+    print(request.args)
+    if request.method == "OPTIONS":
+        return build_preflight_response
+    elif request.method == "GET":
+
+        response = {"data": returnImages()}
+        return build_actual_response(jsonify(response)),200
+
+
+@app.route('/login', methods = ["OPTIONS","GET"])
+def login():
+
+    print(request.json)
+    if request.method == "OPTIONS":
+        return build_preflight_response
+    elif request.method == "POST":
+        jsonData = request.json
+        username = jsonData["username"]
+        password = jsonData["password"]
+
+        response = {"data": returnImages()}
+        return build_actual_response(jsonify(response)),200
 
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', port = 5000, debug=True)
