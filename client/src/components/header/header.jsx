@@ -1,15 +1,14 @@
 import React,{Component} from 'react';
 import styles from  "components/header/header.module.scss"
-import {Redirect} from 'react-router';
 
 
 import {Link} from "react-router-dom";
 import Travelers from "components/header/assets/travelers.jpg"
 import queryString from 'query-string';
 
-import {getAllProfileUsernames,getAllImageTitles,getHashtags} from "utils/api";
+import {getAllProfileUsernames,getAllImageTitles,getHashtags,login} from "utils/api";
 
-import {Grid,Menu,Button,Card, Input, Image, Label,TransitionablePortal,Icon,Form,Dropdown} from 'semantic-ui-react'
+import {Grid,Menu,Button,Card, Input, Image, Label,TransitionablePortal,Icon,Popup,Dropdown} from 'semantic-ui-react'
 
 import {menuJson} from "./data"
 
@@ -21,6 +20,9 @@ export default class SiteHeader extends Component{
         searchType: '',
         searchQuery: [],
         hashtags : [],
+        isLoggedIn: null,
+        loginUsername: '',
+        loginPassword: '',
         imageTitles: [],
         usernames: [],
         options : [],
@@ -33,30 +35,61 @@ export default class SiteHeader extends Component{
 
     }
 
-    getGoods = () => {
-        return [
-            {
-                "key": 0,
-                "text": "#dogs",
-                "value": "dogs"
-            },
-            {
-                "key": 1,
-                "text": "#cats",
-                "value": "cats"
-            },
-            {
-                "key": 2,
-                "text": "#birds",
-                "value": "birds"
-            },
-            {
-                "key": 3,
-                "text": "#birds",
-                "value": "birds"
-            },
+    onChangeLoginUsername(e){
+        this.setState({
+            loginUsername: e.target.value
+        })
 
-        ]
+    }
+
+    logout = () => {
+        localStorage.clear()
+        window.location.reload()
+    }
+
+    onChangeLoginPassword(e){
+        this.setState({
+            loginPassword: e.target.value
+        })
+
+    }
+
+    onchangeLoginClear(){
+        this.setState({
+            loginUsername: '',
+            loginPassword: ''
+        })
+    }
+
+    apiLogin = () =>{        
+        var data = {
+            "username": this.state.loginUsername,
+            "password": this.state.loginPassword
+        }
+        login(data)
+        .then((response) => {
+            if (response.status === 200){
+                localStorage.clear()
+                var responseUsername = response.data["loginData"]["username"]
+                var responseFollowList = JSON.stringify(response.data["loginData"]["followList"])
+                var verified = JSON.stringify(response.data["verified"])
+                localStorage.setItem("caravan-username",responseUsername)
+                localStorage.setItem("caravan-followList",responseFollowList)
+                localStorage.setItem("caravan-isLoggedIn",verified)
+                window.location.reload()
+            }
+            else{
+                localStorage.clear()
+                var verified = JSON.stringify(response.data["verified"])
+                localStorage.setItem("caravan-isLoggedIn",verified)
+            }
+        }
+        )
+        .catch((error) => {
+            localStorage.clear()
+            var verified = JSON.stringify(error.response.data["verified"])
+            localStorage.setItem("caravan-isLoggedIn",verified)
+        })
     }
 
     apiGetProfileNames = () => {
@@ -214,25 +247,31 @@ export default class SiteHeader extends Component{
     }
 
     componentDidMount(){
-        this.setState({open: true})
-        var path = null
-        if (window.location.pathname === "/"){
-            path = "Home"
-        }
         this.setState({
-            activeItem: path
-        }, () => {
-            this.apiGetProfileNames()
-            this.apiGetAllImageTitles()
-            this.apiGetHashtags()
+            open: true,
+            isLoggedIn : JSON.parse(localStorage.getItem("caravan-isLoggedIn")),
+            profileUser : localStorage.getItem("caravan-username"),
+            profileList : JSON.parse(localStorage.getItem("caravan-followList"))
+        },() => {
+            var path = null
+            if (window.location.pathname === "/"){
+                path = "Home"
+            }
+            this.setState({
+                activeItem: path
+            }, () => {
+                this.apiGetProfileNames()
+                this.apiGetAllImageTitles()
+                this.apiGetHashtags()
+            })
+
         })
 
     }
     render () { 
-
         if (this.state.redirect){
             if (this.state.searchType && this.state.searchQuery){
-                var queryURL = "?searchType" + "=" + this.state.searchType + "&values="
+                var queryURL = "?searchType" + "=" + this.state.searchType + "&value="
                 var values = ""
                 for(var i=0; i < this.state.searchQuery.length; i++){
                     values += this.state.searchQuery[i]
@@ -320,80 +359,106 @@ export default class SiteHeader extends Component{
                             </TransitionablePortal>
                         </Menu.Item>
                         <Menu.Menu stackable position = 'right'>
-                            <Menu.Item>
-                                <TransitionablePortal
-                                transition={{
-                                    animation: 'zoom',
-                                    duration: 300
-
-                                }}
-                                trigger={
-                                    <Button icon labelPosition='right' className = {styles.upload}>
-                                        Log In
-                                      <Icon name='sign in alternate' />
+                            {
+                                this.state.isLoggedIn ?
+                                <Menu.Item>
+                                    <Popup inverted position = 'left center' content = 'Sign out' trigger = {
+                                    <Button icon labelPosition='right' className = {styles.upload} onClick = {() => this.logout()}>
+                                        {this.state.profileUser}
+                                    <Icon name='sign out alternate' />
                                     </Button>
-                                }
-                                >
-                                    <Card className = {styles.login}>
-                                        <Image src = {Travelers} wrapped ui = {false}/>
-                                        {
-                                            this.state.signIn ?
-                                            <Card.Content textAlign = {"center"}>
-                                                <Card.Header>Welcome back traveler!</Card.Header>
-                                                <br></br>
-                                                <Input icon='user circle' iconPosition='left' placeholder='Username' />
-                                                <br></br>
-                                                <br></br>
-                                                <Input icon='key' iconPosition='left' placeholder='Password' />
-                                                <br></br>
-                                                <br></br>
-                                                <Button compact circular icon = "upload" className = {styles.upload}>
-                                                    Log In
-                                                </Button>
 
-                                            </Card.Content>
-                                            :
-                                            <Card.Content textAlign = {"center"}>
-                                                <Card.Header>Come join us!</Card.Header>
-                                                <br></br>
-                                                <Input icon='user circle' iconPosition='left' placeholder='Username' />
-                                                <br></br>
-                                                <br></br>
-                                                <Input icon='key' iconPosition='left' placeholder='Password' />
-                                                <br></br>
-                                                <br></br>
-                                                <Input icon='key' iconPosition='left' placeholder='Confirm Password' />
-                                                <br></br>
-                                                <br></br>
-                                                <Input icon='location arrow' iconPosition='left' placeholder='Location' />
-                                                <br></br>
-                                                <br></br>
-                                                <Button compact circular icon = "upload" className = {styles.upload}>
-                                                    Sign Up
-                                                </Button>
+                                    }
+                                    />
+                                </Menu.Item>
 
-                                            </Card.Content>
-                                        }
-                                        {
-                                            this.state.signIn ?
-                                            <Card.Content extra>
-                                                <Label as='a' color = 'orange' ribbon onClick = {this.changeLogin}>
-                                                    Need an acccount?
-                                                </Label>
+                                :
+                                <Menu.Item>
+                                    <TransitionablePortal
+                                    onClose = {() => {this.onchangeLoginClear()}}
+                                    transition={{
+                                        animation: 'zoom',
+                                        duration: 300
     
-                                            </Card.Content>
-                                            :
-                                            <Card.Content extra>
-                                                <Label as='a' color = 'orange' ribbon onClick = {this.changeLogin}>
-                                                    Go back to sign in
-                                                </Label>
+                                    }}
+                                    trigger={
+                                        <Button icon labelPosition='right' className = {styles.upload}>
+                                            Log In
+                                          <Icon name='sign in alternate' />
+                                        </Button>
+                                    }
+                                    >
+                                        <Card className = {styles.login}>
+                                            <Image src = {Travelers} wrapped ui = {false}/>
+                                            {
+                                                this.state.signIn ?
+                                                <Card.Content textAlign = {"center"}>
+                                                    <Card.Header>Welcome back traveler!</Card.Header>
+                                                    <br></br>
+                                                    <Input icon='user circle' iconPosition='left' placeholder='Username' onChange = {(e) => {this.onChangeLoginUsername(e)}} />
+                                                    <br></br>
+                                                    <br></br>
+                                                    <Input icon='key' iconPosition='left' placeholder='Password' onChange = {(e) => {this.onChangeLoginPassword(e)}} />
+                                                    <br></br>
+                                                    <br></br>
+                                                    {
+                                                        (this.state.loginUsername.length && this.state.loginPassword.length) ?
+                                                        <Button compact circular icon = "upload" className = {styles.upload} onClick = {() => {this.apiLogin()}}>
+                                                            Log In
+                                                        </Button>
+                                                        
     
-                                            </Card.Content>
-                                            
-                                        }
-                                    </Card>
-                                </TransitionablePortal>
-                            </Menu.Item>
+                                                        :
+                                                        <Button disabled compact circular icon = "upload" className = {styles.upload}>
+                                                            Log In
+                                                        </Button>
+    
+                                                    }
+    
+                                                </Card.Content>
+                                                :
+                                                <Card.Content textAlign = {"center"}>
+                                                    <Card.Header>Come join us!</Card.Header>
+                                                    <br></br>
+                                                    <Input icon='user circle' iconPosition='left' placeholder='Username' />
+                                                    <br></br>
+                                                    <br></br>
+                                                    <Input icon='key' iconPosition='left' placeholder='Password' />
+                                                    <br></br>
+                                                    <br></br>
+                                                    <Input icon='key' iconPosition='left' placeholder='Confirm Password' />
+                                                    <br></br>
+                                                    <br></br>
+                                                    <Input icon='location arrow' iconPosition='left' placeholder='Location' />
+                                                    <br></br>
+                                                    <br></br>
+                                                    <Button compact circular icon = "upload" className = {styles.upload}>
+                                                        Sign Up
+                                                    </Button>
+    
+                                                </Card.Content>
+                                            }
+                                            {
+                                                this.state.signIn ?
+                                                <Card.Content extra>
+                                                    <Label as='a' color = 'orange' ribbon onClick = {this.changeLogin}>
+                                                        Need an acccount?
+                                                    </Label>
+        
+                                                </Card.Content>
+                                                :
+                                                <Card.Content extra>
+                                                    <Label as='a' color = 'orange' ribbon onClick = {this.changeLogin}>
+                                                        Go back to sign in
+                                                    </Label>
+        
+                                                </Card.Content>
+                                                
+                                            }
+                                        </Card>
+                                    </TransitionablePortal>
+                                </Menu.Item>
+                            }
                         </Menu.Menu>
                     </Menu>
                 </Grid.Column>

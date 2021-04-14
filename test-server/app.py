@@ -1,89 +1,7 @@
 import json
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request,make_response
+from flask_cors import CORS, cross_origin
 from images import *
-
-
-profileComments = [
-        {
-            "comment": "I love your work! Please post more! :)",
-            "commenter" : "MaritaAnona",
-            "commenterPicture": sampleProfile3()
-        },
-        {
-            "comment": "Your photos are okay I guess",
-            "commenter" : "Epha",
-            "commenterPicture": sampleProfile2()
-        },
-        {
-            "comment": "#moredogsplz",
-            "commenter" : "Wollem",
-            "commenterPicture": sampleProfile5()
-        },
-        {
-            "comment": "Follow me please!",
-            "commenter" : "Cleve",
-            "commenterPicture": sampleProfile()
-        }
-    ]
-
-def returnProfileComments():
-
-    return profileComments
-
-imageComments = [
-        {
-            "comment": "Love the photo!",
-            "commenter" : "MaritaAnona",
-            "commenterPicture": sampleProfile3()
-        },
-        {
-            "comment": "Wow, where was this??!",
-            "commenter" : "Epha",
-            "commenterPicture": sampleProfile2()
-        },
-        {
-            "comment": "Take me with you next time!",
-            "commenter" : "Wollem",
-            "commenterPicture": sampleProfile5()
-        },
-        {
-            "comment": "Amazing photo, which camera were you using??",
-            "commenter" : "Cleve",
-            "commenterPicture": sampleProfile()
-        }
-    ]
-
-def returnImageComments():
-
-    return imageComments
-
-account = [
-    {
-        "username": "MaritaAnona",
-        "password": "abcdefg",
-        "followList": ["JosesFarrell","Epha","Cleve"]
-    },
-    {
-        "username": "JosesFarrell",
-        "password": "abcdefg",
-        "followList": ["MaritaAnona","Epha","Cleve"]
-    },
-    {
-        "username": "Cleve",
-        "password": "abcdefg",
-        "followList": ["JosesFarrell","Epha"]
-    },
-    {
-        "username": "Wollem",
-        "password": "abcdefg",
-        "followList": ["JosesFarrell","Epha","Cleve"]
-    },
-    {
-        "username": "Epha",
-        "password": "abcdefg",
-        "followList": ["JosesFarrell","Wollem","Cleve"]
-    },
-]
 
 
 profiles = [
@@ -139,9 +57,95 @@ profiles = [
                 }
 
             ]
-
 def allProfiles():
     return profiles
+
+
+profileComments = [
+        {
+            "comment": "I love your work! Please post more! :)",
+            "commenter" : "MaritaAnona",
+            "commenterPicture": allProfiles()[1]["profilePicture"]
+        },
+        {
+            "comment": "Your photos are okay I guess",
+            "commenter" : "Epha",
+            "commenterPicture": allProfiles()[2]["profilePicture"]
+        },
+        {
+            "comment": "#moredogsplz",
+            "commenter" : "Wollem",
+            "commenterPicture": allProfiles()[4]["profilePicture"]
+        },
+        {
+            "comment": "Follow me please!",
+            "commenter" : "Cleve",
+            "commenterPicture": allProfiles()[3]["profilePicture"]
+        }
+    ]
+
+def returnProfileComments():
+
+    return profileComments
+
+imageComments = [
+        {
+            "comment": "Love the photo!",
+            "commenter" : "MaritaAnona",
+            "commenterPicture": allProfiles()[1]["profilePicture"]
+        },
+        {
+            "comment": "Wow, where was this??!",
+            "commenter" : "Epha",
+            "commenterPicture": allProfiles()[2]["profilePicture"]
+        },
+        {
+            "comment": "Take me with you next time!",
+            "commenter" : "Wollem",
+            "commenterPicture": allProfiles()[4]["profilePicture"]
+        },
+        {
+            "comment": "Amazing photo, which camera were you using??",
+            "commenter" : "Cleve",
+            "commenterPicture": allProfiles()[3]["profilePicture"]
+        }
+    ]
+
+def returnImageComments():
+
+    return imageComments
+
+account = [
+    {
+        "username": "MaritaAnona",
+        "password": "abcdefg",
+        "followList": ["JosesFarrell","Epha","Cleve"]
+    },
+    {
+        "username": "JosesFarrell",
+        "password": "abcdefg",
+        "followList": ["MaritaAnona","Epha","Cleve"]
+    },
+    {
+        "username": "Cleve",
+        "password": "abcdefg",
+        "followList": ["JosesFarrell","Epha"]
+    },
+    {
+        "username": "Wollem",
+        "password": "abcdefg",
+        "followList": ["JosesFarrell","Epha","Cleve"]
+    },
+    {
+        "username": "Epha",
+        "password": "abcdefg",
+        "followList": ["JosesFarrell","Wollem","Cleve"]
+    },
+]
+
+
+
+
 
 
 images = [
@@ -163,21 +167,21 @@ images = [
                     "imageTitle": "Cute dog 3",
                     "imageCaption": "Check out my adorable puppy!!!",
                     "imageUploader": "Cleve",
-                    "imageBase64": sampleProfile(),
+                    "imageBase64": sampleImage(),
                     "imageUUID": "3"
                 },
                 {
                     "imageTitle": "Cute dog 4",
                     "imageCaption": "Check out my adorable puppy!!!",
                     "imageUploader": "Wollem",
-                    "imageBase64": sampleImage(),
+                    "imageBase64": sampleProfile(),
                     "imageUUID": "4"
                 },
                 {
                     "imageTitle": "Cute dog 5",
                     "imageCaption": "Check out my adorable puppy!!!",
                     "imageUploader": "Epha",
-                    "imageBase64": sampleProfile(),
+                    "imageBase64": sampleImage(),
                     "imageUUID": "5"
                 },
                 {
@@ -212,7 +216,7 @@ images = [
                     "imageTitle": "Cute dog 10",
                     "imageCaption": "Check out my adorable puppy!!!",
                     "imageUploader": "Epha",
-                    "imageBase64": sampleProfile(),
+                    "imageBase64": sampleImage(),
                     "imageUUID": "10"
                 },
                 {
@@ -233,7 +237,7 @@ images = [
                     "imageTitle": "Cute dog 13",
                     "imageCaption": "Check out my adorable puppy!!!",
                     "imageUploader": "Cleve",
-                    "imageBase64": sampleProfile(),
+                    "imageBase64": sampleImage(),
                     "imageUUID": "13"
                 },
                 {
@@ -256,6 +260,17 @@ images = [
 
 def returnImages():
     return images
+
+
+def returnUserImages(username):
+
+    response = []
+
+    for image in images:
+        if image["imageUploader"] == username:
+            response.append(image)
+    
+    return response
 
 hashtags = [
                 {
@@ -345,16 +360,16 @@ def returnHashtags():
     return hashtags
 
 app = Flask(__name__)
+CORS(app, support_credentials=False)
 
 def build_preflight_response():
-    response = make_response()
     response.headers.add("Access-Control-Allow-Origin", "*")
     response.headers.add('Access-Control-Allow-Headers', "*")
     response.headers.add('Access-Control-Allow-Methods', "*")
     return response
     
 def build_actual_response(response):
-    response.headers.add("Access-Control-Allow-Origin", "*")
+    # response.headers.add("Access-Control-Allow-Origin", "*")
     return response
 
 
@@ -437,7 +452,7 @@ def getprofile():
             if data["username"] == username:
                 response["profileData"] = data
                 response["profileData"]["comments"] = returnProfileComments()
-                response["profileData"]["imageData"] = returnImages()
+                response["profileData"]["imageData"] = returnUserImages(username)
                 break
         
 
@@ -477,22 +492,179 @@ def search():
         return build_actual_response(jsonify(response)),200
 
 
-@app.route('/login', methods = ["OPTIONS","GET"])
+@app.route('/login', methods = ["OPTIONS","POST"])
+@cross_origin()
 def login():
+    if request.method == "OPTIONS":
+        return build_preflight_response
+    elif request.method == "POST":
+        jsonData = request.json
+        try:
+            username = jsonData["username"]
+            password = jsonData["password"]
+            response = {}
 
-    print(request.json)
+            for act in account:
+                if act["username"] == username:
+                    if act["password"] == password:
+                        response["loginData"] = act
+                        response["verified"] = True
+                        return build_actual_response(jsonify(response)),200
+                    else:
+                        response["verified"] = False
+                        return build_actual_response(jsonify(response)),400
+            
+            
+            response["verified"] = False
+            return build_actual_response(jsonify(response)),400
+        except:
+            response["verified"] = False
+            return build_actual_response(jsonify(response)),400
+
+
+@app.route('/follow', methods = ["OPTIONS","POST"])
+@cross_origin()
+def follow():
     if request.method == "OPTIONS":
         return build_preflight_response
     elif request.method == "POST":
         jsonData = request.json
         username = jsonData["username"]
-        password = jsonData["password"]
+        follow = jsonData["follow"]
+        response = {}
+        for act in account:
+            if act["username"] == username:
+                act["followList"].append(follow)
+                response["followList"] = act["followList"]
+                return build_actual_response(jsonify(response)),200
 
-        response = {"data": returnImages()}
+
+@app.route('/unfollow', methods = ["OPTIONS","POST"])
+@cross_origin()
+def unfollow():
+    if request.method == "OPTIONS":
+        return build_preflight_response
+    elif request.method == "POST":
+        jsonData = request.json
+        username = jsonData["username"]
+        unfollow = jsonData["unfollow"]
+        response = {}
+        for act in account:
+            if act["username"] == username:
+                act["followList"].remove(unfollow)
+                response["followList"] = act["followList"]
+                return build_actual_response(jsonify(response)),200
+
+
+@app.route('/profilecomment', methods = ["OPTIONS","POST"])
+@cross_origin()
+def profilecomment():
+    if request.method == "OPTIONS":
+        return build_preflight_response
+    elif request.method == "POST":
+        jsonData = request.json
+        username = jsonData["username"]
+        targetUsernameProfile = jsonData["targetUsernameProfile"]
+        comment = jsonData["comment"]
+        response = {}
+        profilePic = None
+        for act in profiles:
+            if act["username"] == username:
+                profilePic = act["profilePicture"]
+        profileComments.append({
+            "comment": comment,
+            "commenter": username,
+            "commenterPicture": profilePic
+
+        })
+
+        response["status"] = True
         return build_actual_response(jsonify(response)),200
+
+
+@app.route('/imagecomment', methods = ["OPTIONS","POST"])
+@cross_origin()
+def imageComment():
+    if request.method == "OPTIONS":
+        return build_preflight_response
+    elif request.method == "POST":
+        jsonData = request.json
+        username = jsonData["username"]
+        targetImageUUID = jsonData["targetImageUUID"]
+        comment = jsonData["comment"]
+        response = {}
+        profilePic = None
+        for act in profiles:
+            if act["username"] == username:
+                profilePic = act["profilePicture"]
+        imageComments.append({
+            "comment": comment,
+            "commenter": username,
+            "commenterPicture": profilePic
+
+        })
+
+        response["status"] = True
+        return build_actual_response(jsonify(response)),200
+
+
+@app.route('/editbio', methods = ["OPTIONS","POST"])
+@cross_origin()
+def editbio():
+    if request.method == "OPTIONS":
+        return build_preflight_response
+    elif request.method == "POST":
+        jsonData = request.json
+        username = jsonData["username"]
+        bio = jsonData["bio"]
+        response = {}
+        profilePic = None
+        for act in profiles:
+            if act["username"] == username:
+                act["bio"] = bio
+                response["status"] = True
+                return build_actual_response(jsonify(response)),200
+
+
+@app.route('/editlocation', methods = ["OPTIONS","POST"])
+@cross_origin()
+def editlocation():
+    if request.method == "OPTIONS":
+        return build_preflight_response
+    elif request.method == "POST":
+        jsonData = request.json
+        username = jsonData["username"]
+        location = jsonData["location"]
+        response = {}
+        profilePic = None
+        for act in profiles:
+            if act["username"] == username:
+                act["location"] = location
+                response["status"] = True
+                return build_actual_response(jsonify(response)),200
+
+
+@app.route('/editprofilepicture', methods = ["OPTIONS","POST"])
+@cross_origin()
+def editProfilePicture():
+    if request.method == "OPTIONS":
+        return build_preflight_response
+    elif request.method == "POST":
+        jsonData = request.json
+        username = jsonData["username"]
+        profilePicture = jsonData["profilePicture"].split(',')[1]
+
+        response = {}
+        profilePic = None
+        for act in profiles:
+            if act["username"] == username:
+                act["profilePicture"] = profilePicture
+                response["status"] = True
+                return build_actual_response(jsonify(response)),200
 
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', port = 5000, debug=True)
+
 
 
 

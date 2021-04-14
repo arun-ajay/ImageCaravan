@@ -11,7 +11,7 @@ const AxiosInstance = axios.create({
 
 const getAPI = (apiUrl,params) => AxiosInstance.get(apiUrl,params);
 
-const postAPI = (apiUrl, data,params) => AxiosInstance.post(apiUrl, data,params);
+const postAPI = (apiUrl,data) => AxiosInstance.post(apiUrl, data);
 
 const putAPI = (apiUrl, data,params) => AxiosInstance.put(apiUrl, data,params);
 

@@ -2,9 +2,8 @@ import React,{Component} from 'react';
 import styles from './ware.module.scss';
 import {Redirect,Link} from 'react-router';
 import queryString from 'query-string';
-import {v1 as uuid} from "uuid";
 
-import {getImage} from "utils/api";
+import {getImage,imagecomment} from "utils/api";
 
 import {Grid,Card,Transition,Image,Icon,Form, Button,Header,Label, Loader, Comment} from 'semantic-ui-react'
 
@@ -17,6 +16,7 @@ export default class Ware extends Component{
         commentData : [],
         imageData: null,
         open : false,
+        comment: '',
         redirect: false,
         username : null,
         hash: null,
@@ -39,6 +39,27 @@ export default class Ware extends Component{
         
     }
 
+    onChangeComment(e){
+        this.setState({
+            comment: e.target.value
+        })
+    }
+
+    apiImageComment = () =>{        
+        var data = {
+            "username": this.state.profileUser,
+            "targetImageUUID": this.state.imageIDPage,
+            "comment": this.state.comment
+        }
+        imagecomment(data)
+        .then((response) => {
+            if (response.status === 200){
+                window.location.reload()
+            }
+        }
+        )
+    }
+
     apiGetImageData = () => {
         const queryStringParameters = queryString.parse(this.props.location.search)
         
@@ -53,7 +74,8 @@ export default class Ware extends Component{
                 this.setState({
                     hashtagData : response.data["imageData"]["hashtags"],
                     commentData : response.data["comments"],
-                    imageData :   response.data["imageData"]
+                    imageData :   response.data["imageData"],
+                    imageIDPage: queryStringParameters["imageUUID"]
                 }, () => {
                     this.setState({
                         open: true
@@ -85,8 +107,13 @@ export default class Ware extends Component{
 
 
     async componentDidMount(){
-
-        this.apiGetImageData()
+        this.setState({
+            isLoggedIn : JSON.parse(localStorage.getItem("caravan-isLoggedIn")),
+            profileUser : localStorage.getItem("caravan-username"),
+            profileList : JSON.parse(localStorage.getItem("caravan-followList"))
+        }, () => {
+            this.apiGetImageData()
+        })    
     
     }
     render () {
@@ -214,8 +241,15 @@ export default class Ware extends Component{
         
         
                                                 <Form reply>
-                                                <Form.TextArea />
-                                                <Button content='Add Reply' labelPosition='left' icon='edit' primary />
+                                                <Form.TextArea onChange = {(e) => {this.onChangeComment(e)}} />
+                                                {
+                                                    this.state.comment.length ?
+                                                    <Button className = {styles.upload} onClick = {() => this.apiImageComment()} floated = 'right' content='Add Reply' labelPosition='left' icon='edit' primary />
+
+                                                    :
+                                                    <Button className = {styles.upload} disabled floated = 'right' content='Add Reply' labelPosition='left' icon='edit' primary />
+
+                                                }
                                                 </Form>
                                             </Comment.Group>
                                     </Grid.Column>
