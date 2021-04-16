@@ -487,7 +487,13 @@ def search():
     if request.method == "OPTIONS":
         return build_preflight_response
     elif request.method == "GET":
-
+        searchType = request.args.get('searchType')
+        value = request.args.get('value')
+        print(type(value))
+        print("SEARCH TYPE",searchType)
+        print("VALUE",value)
+        users = value.split(',')
+        print("USERS LIST",users)
         response = {"data": returnImages()}
         return build_actual_response(jsonify(response)),200
 
