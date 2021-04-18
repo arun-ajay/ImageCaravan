@@ -632,6 +632,64 @@ def editbio():
                 return build_actual_response(jsonify(response)),200
 
 
+@app.route('/createaccount', methods = ["OPTIONS","POST"])
+@cross_origin()
+def createaccount():
+    if request.method == "OPTIONS":
+        return build_preflight_response
+    elif request.method == "POST":
+        try:
+            jsonData = request.json
+            data = {
+                "username" : jsonData["username"],
+                "password":  jsonData["password"],
+                "bio":  jsonData["bio"],
+                "profilePicture": jsonData["profilePicture"].split(',')[1],
+                "location": jsonData["location"],
+                "imageCount": "0",
+                "followers": "0",
+                "following":"0"
+            }
+            profiles.append(data)
+            response = {}
+            response["status"] = True
+            return build_actual_response(jsonify(response)),200
+        except Exception as e:
+            print(str(e))
+            response = {
+                "status": False
+            }
+            return build_actual_response(jsonify(response)),400
+
+
+
+
+@app.route('/uploadimage', methods = ["OPTIONS","POST"])
+@cross_origin()
+def uploadimage():
+    if request.method == "OPTIONS":
+        return build_preflight_response
+    elif request.method == "POST":
+        try:
+            jsonData = request.json
+            data = {
+                "imageUploader" : jsonData["imageUploader"],
+                "imageBase64": jsonData["imageBase64"].split(',')[1],
+                "imageTitle": jsonData["imageTitle"],
+                "imageCaption": jsonData["imageCaption"],
+                "hashtags": jsonData["hashtags"]
+            }
+            print(data["imageUploader"])
+            response = {}
+            response["status"] = True
+            return build_actual_response(jsonify(response)),200
+        except Exception as e:
+            print(str(e))
+            response = {
+                "status": False
+            }
+            return build_actual_response(jsonify(response)),400
+
 @app.route('/editlocation', methods = ["OPTIONS","POST"])
 @cross_origin()
 def editlocation():
@@ -667,6 +725,8 @@ def editProfilePicture():
                 act["profilePicture"] = profilePicture
                 response["status"] = True
                 return build_actual_response(jsonify(response)),200
+
+
 
 if __name__ == '__main__':
     app.run(host = '0.0.0.0', port = 5000, debug=True)

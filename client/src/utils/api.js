@@ -33,6 +33,10 @@ const editprofilepicture = (data) => postAPI('/editprofilepicture',data)
 
 const editlocation = (data) => postAPI('/editlocation',data)
 
+const createaccount = (data) => postAPI('/createaccount',data)
+
+const uploadimage = (data) => postAPI('/uploadimage',data)
+
 export {
     getRandomImages,
     getHashtags,
@@ -49,5 +53,7 @@ export {
     profilecomment,
     editbio,
     editprofilepicture,
-    editlocation
+    editlocation,
+    createaccount,
+    uploadimage
 }

@@ -123,7 +123,7 @@ export default class Ware extends Component{
                 return <Redirect push to = {"/profile?username=" + this.state.username}/>
             }
             else if (this.state.hash){
-                return <Redirect push to = {"/search?searchType=hash&values=" + this.state.hash}/>
+                return <Redirect push to = {"/search?searchType=hash&value=" + this.state.hash}/>
 
             }
         }
