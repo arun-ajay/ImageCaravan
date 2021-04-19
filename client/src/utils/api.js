@@ -1,4 +1,4 @@
-const {getAPI,postAPI} = require("./axios")
+const {getAPI,postAPI,deleteAPI} = require("./axios")
 
 
 const getRandomImages = (params) => getAPI('/randomimagecollection',params);
@@ -37,6 +37,8 @@ const createaccount = (data) => postAPI('/createaccount',data)
 
 const uploadimage = (data) => postAPI('/uploadimage',data)
 
+const deleteimage = (data) => postAPI('/deleteimage',data)
+
 export {
     getRandomImages,
     getHashtags,
@@ -55,5 +57,6 @@ export {
     editprofilepicture,
     editlocation,
     createaccount,
-    uploadimage
+    uploadimage,
+    deleteimage
 }

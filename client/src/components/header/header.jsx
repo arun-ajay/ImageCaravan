@@ -1,14 +1,16 @@
 import React,{Component} from 'react';
 import styles from  "components/header/header.module.scss"
-
-
+import {Redirect} from 'react-router';
+import {
+    withRouter
+} from 'react-router-dom'
 import {Link} from "react-router-dom";
 import Travelers from "components/header/assets/travelers.jpg"
 import queryString from 'query-string';
 
 import {getAllProfileUsernames,getAllImageTitles,getHashtags,login,createaccount,uploadimage} from "utils/api";
 
-import {Grid,Menu,Button,Card,Message, Input, Image, Label,TransitionablePortal,Icon,Popup,Dropdown,Form} from 'semantic-ui-react'
+import {Grid,Menu,Header,Button,Card,Message, Input, Image, Label,TransitionablePortal,Icon,Popup,Dropdown,Form} from 'semantic-ui-react'
 
 import {menuJson} from "./data"
 
@@ -260,6 +262,7 @@ export default class SiteHeader extends Component{
     state = {
         activeItem : null,
         signIn: true,
+        visitProfile: false,
         searchType: '',
         searchQuery: [],
         hashtags : [],
@@ -291,6 +294,12 @@ export default class SiteHeader extends Component{
             createBio: '',
             createImage: '',
             createError: ''
+        })
+    }
+
+    visitProfile = () => {
+        this.setState({
+            visitProfile: true
         })
     }
 
@@ -744,6 +753,19 @@ export default class SiteHeader extends Component{
             }
         })
         
+
+        if (this.state.visitProfile){
+            console.log(this.state.visitProfile)
+            //window.location.assign("http://localhost:3000")
+            this.setState({
+                visitProfile: false
+            }, () => {
+                this.props.history.push('/profile?username=' + this.state.profileUser)
+
+            })
+            
+        }
+        
         
 
 
@@ -812,9 +834,19 @@ export default class SiteHeader extends Component{
                             {
                                 this.state.isLoggedIn ?
                                 <Menu.Item>
+                                    <Button onClick = {() => this.visitProfile()} circular className = {styles.upload} icon>
+                                        <Icon name='user circle' />
+                                    </Button>
+                                </Menu.Item>
+                                :
+                                null
+                            }
+                            {
+                                this.state.isLoggedIn ?
+                                <Menu.Item>
                                     <Popup inverted position = 'left center' content = 'Sign out' trigger = {
                                     <Button icon labelPosition='right' className = {styles.upload} onClick = {() => this.logout()}>
-                                        {this.state.profileUser}
+                                        Log Out
                                     <Icon name='sign out alternate' />
                                     </Button>
 

@@ -3,9 +3,9 @@ import styles from './profile.module.scss';
 import {Redirect} from 'react-router';
 import queryString from 'query-string';
 
-import {getProfile,follow,unfollow,profilecomment,editbio,editlocation,editprofilepicture} from "utils/api";
+import {getProfile,deleteimage,follow,unfollow,profilecomment,editbio,editlocation,editprofilepicture} from "utils/api";
 
-import {Grid,Card,Transition,Image,Flag,Form, Button,Header,Icon, Loader, Comment,Popup,Dropdown} from 'semantic-ui-react'
+import {Grid,Card,Transition,Image,Label,Flag,Form, Button,Header,Icon, Loader, Comment,Popup,Dropdown} from 'semantic-ui-react'
 
 
 
@@ -333,7 +333,6 @@ export default class Profile extends Component{
     }
 
     onChangeLocation = (e,{value}) => {
-        console.log("VALUE LOCATION",value)
         this.setState({
             country: value
         })
@@ -344,6 +343,8 @@ export default class Profile extends Component{
             comment: e.target.value
         })
     }
+
+
 
     onChangeBio(e){
         this.setState({
@@ -365,6 +366,25 @@ export default class Profile extends Component{
             }
         }
         )
+    }
+    
+    apiDeleteImage = (e) => {
+        var data = {
+            "username": this.state.profileUser,
+            "imageUUID": e
+        }
+
+        console.log(data)
+
+        deleteimage(data)
+        .then((response) => {
+            if(response.status == 200){
+                window.location.reload()
+            }
+            else{
+                console.log(response)
+            }
+        })
     }
 
     apiProfileComment = () =>{        
@@ -449,7 +469,6 @@ export default class Profile extends Component{
         }
 
         getProfile(params).then((response) => {
-            console.log(response.data)
             if(response.status === 200){
                 this.setState({
                     profileData : response.data["profileData"],
@@ -514,8 +533,6 @@ export default class Profile extends Component{
     }
     render () {
 
-        console.log("PROIFLE TSTAT",this.state)
-
         if (this.state.redirect){
             if(this.state.username){
                 return <Redirect push to = {"/profile?username=" + this.state.username}/>
@@ -531,11 +548,23 @@ export default class Profile extends Component{
         var cardArray = this.state.imageData.map((data,index) => {
             return <Transition  animation = {this.state.animations[index % 3]} duration = {500+(index)*20} visible = {this.state.open}>
                 
-                
-                <Card as = 'a' onClick = {() => this.visitImage(this.state.imageData[index]["imageUUID"])}  color = {this.state.colors[index % 13]} fluid>
-                    <Image src = {`data:image/jpeg;base64,${data["imageBase64"]}`}  wrapped ui = {false}/>
-                    
-                </Card>
+                {
+                    this.state.isLoggedIn && (this.state.profileUser == this.state.usernamePage) ?
+                    <Card as = 'a'  color = {this.state.colors[index % 13]} fluid>
+                        <Image  onClick = {() => this.visitImage(this.state.imageData[index]["imageUUID"])}  src = {`data:image/jpeg;base64,${data["imageBase64"]}`}  wrapped ui = {false}/>
+                        <Card.Content textAlign = {"center"} extra>
+                            <Button onClick = {() => {this.apiDeleteImage(data["imageUUID"])}} negative>
+                                Delete Image
+                            </Button>
+                        </Card.Content>
+                    </Card>
+                    :
+                    <Card as = 'a'  color = {this.state.colors[index % 13]} fluid>
+                        <Image onClick = {() => this.visitImage(this.state.imageData[index]["imageUUID"])}  src = {`data:image/jpeg;base64,${data["imageBase64"]}`}  wrapped ui = {false}/>
+                    </Card>
+
+
+                }
             
             </Transition>
         }

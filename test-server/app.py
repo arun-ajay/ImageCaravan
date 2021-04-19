@@ -726,6 +726,24 @@ def editProfilePicture():
                 response["status"] = True
                 return build_actual_response(jsonify(response)),200
 
+@app.route('/deleteimage', methods = ["OPTIONS","POST"])
+@cross_origin()
+def deleteimage():
+    if request.method == "OPTIONS":
+        return build_preflight_response
+    elif request.method == "POST":
+        print("JSONDATA",request)
+        jsonData = request.json
+        username = jsonData["username"]
+        imageUUID = jsonData["imageUUID"]
+        response = {}
+        profilePic = None
+        for act in images:
+            if act["imageUUID"] == imageUUID:
+                images.remove(act)
+                response["status"] = True
+                return build_actual_response(jsonify(response)),200
+
 
 
 if __name__ == '__main__':
