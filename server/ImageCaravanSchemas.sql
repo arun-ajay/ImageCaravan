@@ -3,7 +3,7 @@ CREATE TABLE Users (
   userName TEXT NOT NULL,
   password TEXT NOT NULL,
   bio TEXT,
-  location text NOT NULL,
+  location TEXT NOT NULL,
   profilePicture TEXT,
   imageList TEXT,
   PRIMARY KEY (id)
