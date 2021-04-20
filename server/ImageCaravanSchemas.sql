@@ -1,3 +1,7 @@
+DROP DATABSE IF EXISTS imagecaravan;
+CREATE DATABASE imagecaravan;
+USE imagecaravan;
+
 CREATE TABLE Users (
   id INT AUTO_INCREMENT,
   userName TEXT NOT NULL,
