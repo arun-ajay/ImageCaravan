@@ -581,7 +581,7 @@ export default class SiteHeader extends Component{
             uploadHashtags: value
         })
     }
-    
+
     addHashtagOption = (e,{value}) => {
         this.setState((prevState) => ({
             uploadOptions: [
@@ -734,7 +734,14 @@ export default class SiteHeader extends Component{
 
     render () {
 
+        console.log(localStorage.getItem("caravan-username"))
 
+        if (localStorage.getItem("caravan-username") == null){
+            console.log("IT'S NULL")
+        }
+        else{
+            console.log("NOT NULL")
+        }
 
         if (this.state.redirect){
             if (this.state.searchType && this.state.searchQuery){

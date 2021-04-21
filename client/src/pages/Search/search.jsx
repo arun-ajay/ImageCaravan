@@ -125,17 +125,17 @@ export default class Search extends Component{
         )
 
         var first = cardArray.map((data,index) => {
-            if ((index + 1) % 3 == 1){
+            if ((index + 1) % 4 == 1){
                 return data
             }
         })
         var second = cardArray.map((data,index) => {
-            if ((index + 1) % 3 == 2){
+            if ((index + 1) % 4 == 2){
                 return data
             }
         })
         var third = cardArray.map((data,index) => {
-            if ((index + 1) % 3 == 0){
+            if ((index + 1) % 4 == 3){
                 return data
             }
         })
@@ -157,19 +157,13 @@ export default class Search extends Component{
                         
                         </Grid.Column>
                         <Grid.Column width = {3}>
-                    
                                 {second}
-                        
                         </Grid.Column>
                         <Grid.Column width = {3}>
-                    
                                 {third}
-                        
                         </Grid.Column>
                         <Grid.Column width = {3}>
-                    
                                 {fourth}
-                        
                         </Grid.Column>
                         <Grid.Column width = {2}/>
 

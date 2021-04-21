@@ -197,12 +197,22 @@ export default class Ware extends Component{
                                     {this.state.imageData["imageCaption"]}
                                 </Card.Meta>
                             </Card.Content>
-                            <Card.Content as = 'a' onClick = {() => this.visitProfile(this.state.imageData["imageUploader"])} extra>
-                                <a>
-                                    <Icon  name = 'user' />
-                                    {this.state.imageData["imageUploader"]}
-                                </a>
-                            </Card.Content>
+                            {
+                                (this.state.imageData["imageUploader"] == "Anonymous") ?
+                                <Card.Content extra>
+                                    <span>
+                                        <Icon  name = 'user' />
+                                        {this.state.imageData["imageUploader"]}
+                                    </span>
+                                </Card.Content>
+                                :
+                                <Card.Content as = 'a' onClick = {() => this.visitProfile(this.state.imageData["imageUploader"])} extra>
+                                    <a>
+                                        <Icon  name = 'user' />
+                                        {this.state.imageData["imageUploader"]}
+                                    </a>
+                                </Card.Content>
+                            }
                         </Card>
                     </Transition>
          
@@ -239,18 +249,22 @@ export default class Ware extends Component{
                                                 </Header>
                                                 {comments}
         
-        
-                                                <Form reply>
-                                                <Form.TextArea onChange = {(e) => {this.onChangeComment(e)}} />
                                                 {
-                                                    this.state.comment.length ?
-                                                    <Button className = {styles.upload} onClick = {() => this.apiImageComment()} floated = 'right' content='Add Reply' labelPosition='left' icon='edit' primary />
-
+                                                    this.state.isLoggedIn ?
+                                                    <Form reply>
+                                                        <Form.TextArea onChange = {(e) => {this.onChangeComment(e)}} />
+                                                        {
+                                                            this.state.comment.length ?
+                                                            <Button className = {styles.upload} onClick = {() => this.apiImageComment()} floated = 'right' content='Add Reply' labelPosition='left' icon='edit' primary />
+    
+                                                            :
+                                                            <Button className = {styles.upload} disabled floated = 'right' content='Add Reply' labelPosition='left' icon='edit' primary />
+    
+                                                        }
+                                                    </Form>
                                                     :
-                                                    <Button className = {styles.upload} disabled floated = 'right' content='Add Reply' labelPosition='left' icon='edit' primary />
-
+                                                    null
                                                 }
-                                                </Form>
                                             </Comment.Group>
                                     </Grid.Column>
                                 </Grid.Row>

@@ -40,7 +40,7 @@ def randomimagecollection():
         try:
             conn = mariadb.connect(**config)
             cur = conn.cursor()
-            cur.execute("select * from Image where visible = '1' ")
+            cur.execute("select * from Image where visible = '1' ORDER BY RAND() LIMIT 4")
             randomImages = cur.fetchall()
             if randomImages is not None:
                 randomImages = list(randomImages)
@@ -553,9 +553,8 @@ def uploadimage():
 
             rowData = [] # Data to be uploaded to database
             if jsonData["imageUploader"] is None:
-                rowData.append("Anonymous")
-            else:
-                rowData.append(jsonData["imageUploader"])
+                jsonData["imageUploader"] = "Anonymous"
+            rowData.append(jsonData["imageUploader"])
             rowData.append(jsonData["imageBase64"].split(',')[1])
             rowData.append(jsonData["imageTitle"])
             rowData.append(jsonData["imageCaption"])
@@ -575,22 +574,24 @@ def uploadimage():
                 conn.commit()
 
             result = []
-            cur.execute("SELECT imageList from users where username = ?", (jsonData["imageUploader"],))
-            images = cur.fetchone()
-            images = images[0]
-            result = json.loads(images)
 
-            cur.execute("SELECT max(imageUUID) from image ")
-            imageUUID2 = cur.fetchall()
-            imageUUID2 = imageUUID2[0][0]
+            if jsonData["imageUploader"].lower() != "anonymous":
+                cur.execute("SELECT imageList from users where username = ?", (jsonData["imageUploader"],))
+                images = cur.fetchone()
+                images = images[0]
+                result = json.loads(images)
 
-            result.append(imageUUID2)
-            final = json.dumps(result)
+                cur.execute("SELECT max(imageUUID) from image ")
+                imageUUID2 = cur.fetchall()
+                imageUUID2 = imageUUID2[0][0]
 
-            imageList = []
-            for image in result:
-                cur.execute ("UPDATE users SET imagelist = ? WHERE username = ?", (json.dumps(result),jsonData["imageUploader"],))
-                conn.commit()
+                result.append(imageUUID2)
+                final = json.dumps(result)
+
+                imageList = []
+                for image in result:
+                    cur.execute ("UPDATE users SET imagelist = ? WHERE username = ?", (json.dumps(result),jsonData["imageUploader"],))
+                    conn.commit()
 
             conn.close()
             return build_actual_response(jsonify({
