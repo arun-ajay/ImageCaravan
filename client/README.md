@@ -9,6 +9,6 @@
 
 1. On your terminal, change your directory to the client directory
 2. Run `npm install` to install the UI dependencies
-3. Run "npm start" to start the client server
+3. Run `npm start` to start the client server
 4. localhost:3000 should appear on your default browser
 
