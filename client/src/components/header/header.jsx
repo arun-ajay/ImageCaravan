@@ -283,7 +283,8 @@ export default class SiteHeader extends Component{
         createLocation: '',
         createBio: '',
         createImage: '',
-        createError: ''
+        createError: '',
+        loginError: ''
     }
 
     onChangeCreateClear(){
@@ -411,7 +412,8 @@ export default class SiteHeader extends Component{
     onchangeLoginClear(){
         this.setState({
             loginUsername: '',
-            loginPassword: ''
+            loginPassword: '',
+            loginError: ''
         }, () => { this.onChangeCreateClear()})
     }
 
@@ -486,6 +488,9 @@ export default class SiteHeader extends Component{
                 localStorage.clear()
                 var verified = JSON.stringify(response.data["verified"])
                 localStorage.setItem("caravan-isLoggedIn",verified)
+                this.setState({
+                    loginError: "error"
+                })
             }
         }
         )
@@ -493,6 +498,9 @@ export default class SiteHeader extends Component{
             localStorage.clear()
             var verified = JSON.stringify(error.response.data["verified"])
             localStorage.setItem("caravan-isLoggedIn",verified)
+            this.setState({
+                loginError: "error"
+            })
         })
     }
 
@@ -661,6 +669,22 @@ export default class SiteHeader extends Component{
 
     }
 
+    messageLoginBlock = () => {
+        switch(this.state.loginError){
+            case "error":
+                return(
+                    <Message
+                        error
+                        header='Error'
+                        content = "This username/password combination does not exist!"
+                    />
+                )
+            default:
+                return null
+
+        }
+    }
+
     messageBlock = () => {
         switch(this.state.createError){
             case "success":
@@ -697,7 +721,7 @@ export default class SiteHeader extends Component{
 
     render () {
 
-        console.log(this.state.createError)
+        console.log("LOGIN ERROR:",this.state.loginError)
 
         if (this.state.redirect){
             if (this.state.searchType && this.state.searchQuery){
@@ -756,7 +780,6 @@ export default class SiteHeader extends Component{
 
         if (this.state.visitProfile){
             console.log(this.state.visitProfile)
-            //window.location.assign("http://localhost:3000")
             this.setState({
                 visitProfile: false
             }, () => {
@@ -896,7 +919,7 @@ export default class SiteHeader extends Component{
                                                         </Button>
     
                                                     }
-    
+                                                    {this.messageLoginBlock()}
                                                 </Card.Content>
                                                 :
                                                 <Card.Content >

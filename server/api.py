@@ -3,9 +3,11 @@ import flask
 import json
 import mariadb
 from flask import jsonify, request
+from flask_cors import CORS, cross_origin
 from images import *
 
 app = flask.Flask(__name__)
+CORS(app, support_credentials=False)
 app.config["DEBUG"] = True
 
 def build_preflight_response():
@@ -23,13 +25,14 @@ def build_actual_response(response):
 config = {
     'host': '127.0.0.1',
     'port': 3306,
-    'user': 'nour',
+    'user': 'root',
     'password': 'Winxclub1',
     'database': 'ImageCaravan'
 }
 
 #route to get random image collection
 @app.route('/randomimagecollection', methods = ['OPTIONS','GET'])
+@cross_origin()
 def randomimagecollection():
     if request.method == 'OPTIONS':
         return build_preflight_response
@@ -40,7 +43,6 @@ def randomimagecollection():
             cur.execute("select * from Image where visible = '1' ")
             randomImages = cur.fetchall()
             if randomImages is not None:
-                print (type(randomImages))
                 randomImages = list(randomImages)
                 conn.close()
 
@@ -83,7 +85,6 @@ def getallimagetitles():
             imageTitles = cur.fetchall()
 
             if imageTitles is not None:
-                print (type(imageTitles))
                 imageTitles = list(imageTitles)
                 conn.close()
 
@@ -124,8 +125,6 @@ def gethashtags():
             hashtags = cur.fetchall()
 
             if hashtags is not None:
-                print (type(hashtags))
-                print (hashtags)
                 hashtags = list(hashtags)
                 conn.close()
 
@@ -167,8 +166,6 @@ def getallprofileusernames():
             userNames = cur.fetchall()
 
             if userNames is not None:
-                print (type(userNames))
-                print(userNames)
                 userNames = list(userNames)
                 conn.close()
 
@@ -206,12 +203,10 @@ def getallprofiles():
         try:
             conn = mariadb.connect(**config)
             cur = conn.cursor()
-            cur.execute("select users.username, users.profilePicture, users.bio, users.location, (select count(*) from followers where users.username = followers.username) as followersCount, (select count(*) from following where users.username = following.username) as followingCount, (select count(*) from image where users.username = image.imageUploader) as imageCount from users;")
+            cur.execute("select users.username, users.profilePicture, users.bio, users.location, (select count(*) from followers where users.username = followers.username) as followersCount, (select count(*) from following where users.username = following.username) as followingCount, (select count(*) from image where users.username = image.imageUploader AND image.visible = '1') as imageCount from users;")
             allProfiles = cur.fetchall()
 
             if allProfiles is not None:
-                print(type(allProfiles))
-                print(allProfiles)
                 allProfiles= list(allProfiles)
                 conn.close()
 
@@ -255,14 +250,11 @@ def getprofile():
             cur = conn.cursor()
             
             username = request.args.get('username')
-            print("USERNAME",username)
             cur.execute("SELECT * FROM USERS WHERE username = ?",(username,))
 
             dbProfileData = cur.fetchone()
-            print(dbProfileData)
             dbProfileData = list(dbProfileData)
             dbProfileData[6] = dbProfileData[6].split(",")
-            print(dbProfileData)
             response = {}
             response["profileData"] = {}
             response["profileData"]["username"] = dbProfileData[1]
@@ -277,6 +269,7 @@ def getprofile():
                 followersList.append(follower[1])
 
             response["profileData"]["followersList"] = followersList
+            response["profileData"]["followers"] = len(followersList)
             
             cur.execute("SELECT * FROM FOLLOWING WHERE username = ?",(username,))
             followingList = []
@@ -285,6 +278,7 @@ def getprofile():
                 followingList.append(following[1])
 
             response["profileData"]["followingList"] = followingList
+            response["profileData"]["following"] = len(followingList)
 
             cur.execute("SELECT * FROM IMAGE WHERE imageUploader=? AND visible = 1",(username,))
             imageList = []
@@ -299,15 +293,16 @@ def getprofile():
                 imageList.append(imageOBJ)
             
             response["profileData"]["imageData"] = imageList
+            response["profileData"]["imageCount"] = len(imageList)
 
             cur.execute("SELECT * FROM profilecomments JOIN users on users.username = profilecomments.commenter where profile = ? ", (username,))
             commentsList = []
             commentData = cur.fetchall()
             for comment in commentData:
                 commentOBJ = {}
-                commentOBJ["comment"] = comment [1]
-                commentOBJ["commenter"] = comment [2]
-                commentOBJ["commenterPicture"] = comment [8]
+                commentOBJ["comment"] = comment [2]
+                commentOBJ["commenter"] = comment [3]
+                commentOBJ["commenterPicture"] = comment [9]
                 commentsList.append(commentOBJ)
             response["profileData"]["comments"] = commentsList
 
@@ -328,7 +323,6 @@ def getimage():
             cur = conn.cursor()
 
             imageUUID = request.args.get('imageUUID')
-            print("IMAGEUUID",imageUUID)
             cur.execute("SELECT * FROM IMAGE WHERE imageUUID = ?",(imageUUID,))
             dbImageData = cur.fetchone()
 
@@ -338,8 +332,9 @@ def getimage():
             response["imageData"]["imageCaption"] = dbImageData[2]
             response["imageData"]["imageUUID"] = dbImageData[1]
             response["imageData"]["imageBase64"] = dbImageData[3]
+            response["imageData"]["imageUploader"] = dbImageData[4]
 
-            cur.execute("select hashtag, count(hashtag) AS CountOf FROM hashtag GROUP BY hashtag")
+            cur.execute("select hashtag, count(hashtag) AS CountOf FROM hashtag  WHERE imageUUID = ? GROUP BY hashtag",(imageUUID,))
             hashtagData = cur.fetchall()
 
             hashtagList = []
@@ -349,18 +344,20 @@ def getimage():
                     'imageCount' : hashtag [1]
                 }
                 hashtagList.append(tags)
-            response["imageData"]["hashtagList"] = hashtagList
+            response["imageData"]["hashtags"] = hashtagList
 
-            cur.execute("SELECT * FROM imagecomments WHERE imageUUID=?",(imageUUID,))
+            #cur.execute("SELECT * FROM profilecomments JOIN users on users.username = profilecomments.commenter where profile = ? ", (username,))
+            cur.execute("SELECT * FROM imagecomments JOIN users on users.username = imagecomments.commenter where imageUUID = ?",(imageUUID,))
+            #cur.execute("SELECT * FROM imagecomments WHERE imageUUID=?",(imageUUID,))
             commentList = []
             commentData = cur.fetchall()
             for comment in commentData:
                 commentOBJ = {}
-                commentOBJ["comment"] = comment[0]
-                commentOBJ["commenter"] = comment[1]
-                commentOBJ["commenterPicture"] = comment[2]
+                commentOBJ["comment"] = comment[2]
+                commentOBJ["commenter"] = comment[3]
+                commentOBJ["commenterPicture"] = comment[9]
                 commentList.append(commentOBJ)
-            response["imageData"]["commentData"] = commentList
+            response["imageData"]["comments"] = commentList
 
             conn.close()
 
@@ -371,6 +368,7 @@ def getimage():
 
 # route to return search data
 @app.route('/search', methods = ['OPTIONS','GET'])
+@cross_origin()
 def search():
     if request.method == 'OPTIONS':
         return build_preflight_response
@@ -381,31 +379,22 @@ def search():
         
             searchType = request.args.get('searchType')
             value = request.args.get('value')
-            print(type(value))
-            #print("SEARCH TYPE",searchType)
-            #print("VALUE",value)
             user = value.split(',')
-            #print("USERS LIST",users)
             image = value.split(',')
-            #print("IMAGETITLE LIST",imageTitle)
             hash = value.split(',')
-            #print("HASHTAG LIST",hashtag)
-
-            print (user)
             if searchType == "user":
                 response = {}
                 imageUploaders = []
                 for value in user:
                     cur.execute("SELECT * from image WHERE imageUploader = ? AND visible = '1'", (value,))
                     imageData = cur.fetchall()
-                    print(imageData)
                     
                     for image in imageData:
                         imageOBJ = {}
                         imageOBJ["imageTitle"] = image[0]
                         imageOBJ["imageCaption"] = image[2]
                         imageOBJ["imageUploader"] = image[4]
-                        imageOBJ["ImageBase64"] = image [3]
+                        imageOBJ["imageBase64"] = image [3]
                         imageOBJ["imageUUID"] = image[1]
                         if imageOBJ not in imageUploaders:
                             imageUploaders.append(imageOBJ)
@@ -415,7 +404,7 @@ def search():
                 imageTitles = []
                 response = {}
                 for value in image:
-                    cur.execute("SELECT * from image WHERE imageTitle = ? AND visible = '1'", (value,))
+                    cur.execute("SELECT * from image WHERE imageUUID = ? AND visible = '1'", (value,))
                     imagesData = cur.fetchall()
     
                     for image in imagesData:
@@ -423,7 +412,7 @@ def search():
                         imageOBJ["imageTitle"] = image[0]
                         imageOBJ["imageCaption"] = image[2]
                         imageOBJ["imageUploader"] = image[4]
-                        imageOBJ["ImageBase64"] = image [3]
+                        imageOBJ["imageBase64"] = image [3]
                         imageOBJ["imageUUID"] = image[1]
                         if imageOBJ not in imageTitles:
                             imageTitles.append(imageOBJ)
@@ -433,7 +422,7 @@ def search():
                 hashTags = []
                 response = {}
                 for value in hash:
-                    cur.execute("SELECT * from image JOIN hashtag on image.imageUUID = hashtag.imageUUID where hashtag = ? AND visible = '1'",(value,))
+                    cur.execute("SELECT * from image JOIN hashtag on image.imageUUID = hashtag.imageUUID where hashtag = ? AND image.visible = '1'",(value,))
                     hashtagData = cur.fetchall()
                     
                     for hashtag in hashtagData:
@@ -441,7 +430,7 @@ def search():
                         hashtagOBJ["imageTitle"] = hashtag[0]
                         hashtagOBJ["imageCaption"] = hashtag[2]
                         hashtagOBJ["imageUploader"] = hashtag[4]
-                        hashtagOBJ["ImageBase64"] = hashtag[3]
+                        hashtagOBJ["imageBase64"] = hashtag[3]
                         hashtagOBJ["imageUUID"] = hashtag[1]
                         if hashtagOBJ not in hashTags:
                             hashTags.append(hashtagOBJ)
@@ -459,6 +448,7 @@ def search():
             return body, 400
 
 @app.route('/createaccount', methods = ['OPTIONS', 'POST'])
+@cross_origin()
 def createacccount():
     if request.method == "OPTIONS":
         return build_preflight_response
@@ -470,8 +460,8 @@ def createacccount():
             rowData.append(jsonData["username"])
             rowData.append(jsonData["password"])
             rowData.append(jsonData["bio"])
-            if jsonData["profilePicture"] is None:
-                rowData.append(samplePicture())
+            if jsonData["profilePicture"] == "":
+                rowData.append(sampleProfile())
             else:
                 rowData.append(jsonData["profilePicture"].split(',')[1])
             rowData.append(jsonData["location"])
@@ -502,12 +492,14 @@ def createacccount():
             return body, 400
 
 @app.route('/login', methods = ['OPTIONS','POST'])
+@cross_origin()
 def login():
     if request.method == "OPTIONS":
         return build_preflight_response
     elif request.method == "POST":
         try: 
             jsonData = request.json
+            print("JSONDATA",jsonData)
 
             rowData = [] # Data to be uploaded to database
             rowData.append(jsonData["username"])
@@ -517,38 +509,41 @@ def login():
             cur = conn.cursor()
             cur.execute("SELECT * FROM users WHERE username = ? AND password = ? ",tuple(rowData))
             userData = cur.fetchone()
-            print(userData)
 
             cur.execute("SELECT distinct following FROM Following WHERE username = ?",(jsonData["username"],))
             followingData = cur.fetchall()
-            print(followingData)
 
             cur.execute("SELECT * FROM users WHERE username = ?",(jsonData["username"],))
             imageData = cur.fetchone()
-            print(imageData)
 
             if userData is not None:
                 response = {}
                 response["loginData"] = {}
                 response["verified"] = {}
-                response["verified"] = "1"
+                response["verified"] = True
                 response["loginData"]["username"] = imageData[1]
                 response["loginData"]["profilePicture"] = imageData[5]
                 followList = []
                 for follow in followingData:
                     followList.append(follow[0])
                 response["loginData"]["followList"] = followList
+                conn.close()
                 return build_actual_response(jsonify(response)), 200
+            else:
+                conn.close()
+                raise Exception("Invalid username/password combination")
 
-            conn.close()
+            
         except Exception as e:
             body = {
-                'Error': "userName or password combination does not exit!"
+                'Error': "This username/password combination does not exist.",
+                "verified": False
             }
             print("ERROR MSG:",str(e))
-            return body, 400
+            return build_actual_response(jsonify(body)), 400
 
 @app.route('/uploadimage', methods = ['OPTIONS', 'POST'])
+@cross_origin()
 def uploadimage():
     if request.method == "OPTIONS":
         return build_preflight_response
@@ -573,7 +568,6 @@ def uploadimage():
 
             cur.execute("SELECT max(imageUUID) from image")
             imageUUID = cur.fetchall()
-            print (imageUUID)
             imageUUID = imageUUID[0][0]
 
             for hashtag in rowData[4]:
@@ -585,16 +579,12 @@ def uploadimage():
             images = cur.fetchone()
             images = images[0]
             result = json.loads(images)
-            print(result)
-            print(type(result))
 
             cur.execute("SELECT max(imageUUID) from image ")
             imageUUID2 = cur.fetchall()
             imageUUID2 = imageUUID2[0][0]
 
             result.append(imageUUID2)
-
-            print(result)
             final = json.dumps(result)
 
             imageList = []
@@ -614,6 +604,7 @@ def uploadimage():
             return build_actual_response(jsonify(body)), 400
 # route to follow a person
 @app.route('/follow', methods = ['OPTIONS','POST'])
+@cross_origin()
 def follow():
     if request.method == 'OPTIONS':
         return build_preflight_response
@@ -636,7 +627,6 @@ def follow():
 
             cur.execute("SELECT distinct following FROM Following WHERE username = ?",(jsonData["username"],))
             followingData = cur.fetchall()
-            print(followingData)
 
             response = {}
             followList = []
@@ -654,6 +644,7 @@ def follow():
             return build_actual_response(jsonify(body)), 400
 
 @app.route('/unfollow', methods = ['OPTOINS', 'POST'])
+@cross_origin()
 def unfollow():
     if request.method == 'OPTIONS':
         return build_preflight_response
@@ -675,7 +666,6 @@ def unfollow():
 
             cur.execute("SELECT distinct following FROM Following WHERE username = ?",(jsonData["username"],))
             followingData = cur.fetchall()
-            print(followingData)
 
             response = {}
             followList = []
@@ -693,6 +683,7 @@ def unfollow():
             return build_actual_response(jsonify(body)), 400
 
 @app.route('/imagecomment', methods = ['OPTIONS', 'POST'])
+@cross_origin()
 def imagecomment():
     if request.method == 'OPTIONS':
         return build_preflight_response
@@ -708,18 +699,16 @@ def imagecomment():
             conn = mariadb.connect(**config)
             cur = conn.cursor()
 
-            cur.execute("SELECT visible from image WHERE imageUUID = ?", (jsonData["targetImageUUID"],))
-            imageStatus = cur.fetchone()
-            print(imageStatus)
 
-            if imageStatus == "1":
-                cur.execute("INSERT INTO imagecomments VALUES (?,?,?)", tuple(rowData))
-                conn.commit()
-                conn.close()
 
-                return build_actual_response(jsonify({
-                    "Status" : "1"
-                })) , 200
+
+            cur.execute("INSERT INTO imagecomments (imageUUID,comment,commenter) VALUES (?,?,?)", tuple(rowData))
+            conn.commit()
+            conn.close()
+
+            return build_actual_response(jsonify({
+                "Status" : "1"
+            })) , 200
         except Exception as e:
             body = {
                 'Error': "Can't comment on image!"
@@ -729,6 +718,7 @@ def imagecomment():
 
 
 @app.route('/profilecomment', methods = ['OPTIONS', 'POST'])
+@cross_origin()
 def profilecomment():
     if request.method == 'OPTIONS':
         return build_preflight_response
@@ -744,7 +734,7 @@ def profilecomment():
             conn = mariadb.connect(**config)
             cur = conn.cursor()
 
-            cur.execute("INSERT INTO profilecomments VALUES (?,?,?)", tuple(rowData))
+            cur.execute("INSERT INTO profilecomments (profile,comment,commenter) VALUES (?,?,?)", tuple(rowData))
             conn.commit()
             conn.close()
 
@@ -759,6 +749,7 @@ def profilecomment():
             return build_actual_response(jsonify(body)), 400
 
 @app.route('/deleteimage', methods = ['OPTIONS', 'POST'])
+@cross_origin()
 def deleteimage():
     if request.method == 'OPTIONS':
         return build_preflight_response
@@ -782,14 +773,11 @@ def deleteimage():
             cur.execute("select imagelist from users where username = ?", (jsonData["username"],))
             result = cur.fetchone()
             result = result[0]
-            print(result)
             final = json.dumps(result)
             final = json.loads(result)
-            print(final)
             imageUUID = int(jsonData["imageUUID"])
             final.remove(imageUUID)
             final = json.dumps(final)
-            print(final)
 
             cur.execute("UPDATE users set imagelist = ? where username = ?", (final,jsonData["username"],))
             conn.commit()
@@ -806,6 +794,7 @@ def deleteimage():
             return build_actual_response(jsonify(body)), 400
 
 @app.route('/editlocation', methods = ['OPTIONS', 'POST'])
+@cross_origin()
 def editlocation():
     if request.method == 'OPTIONS':
         return build_preflight_response
@@ -835,6 +824,7 @@ def editlocation():
             return build_actual_response(jsonify(body)), 400
 
 @app.route('/editprofilepicture', methods = ['OPTIONS', 'POST'])
+@cross_origin()
 def editprofilepicture():
     if request.method == 'OPTIONS':
         return build_preflight_response
@@ -864,6 +854,7 @@ def editprofilepicture():
             return build_actual_response(jsonify(body)), 400
 
 @app.route('/editbio', methods = ['OPTIONS', 'POST'])
+@cross_origin()
 def editbio():
     if request.method == 'OPTIONS':
         return build_preflight_response
@@ -893,4 +884,4 @@ def editbio():
             return build_actual_response(jsonify(body)), 400
           
 if __name__ == '__main__':
-    app.run()
+    app.run(host = '0.0.0.0', port = 5000, debug=True)

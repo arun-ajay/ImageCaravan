@@ -69,7 +69,7 @@ export default class Goods extends Component{
     render () { 
 
         if (this.state.redirect){
-            return <Redirect push to = {"/search?searchType=hash&values=" + this.state.hash}/>
+            return <Redirect push to = {"/search?searchType=hash&value=" + this.state.hash}/>
         }
 
         var labelArray = this.state.hashtags.map((data,index) => {

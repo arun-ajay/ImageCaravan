@@ -36,7 +36,7 @@ export default class Landing extends Component{
         getRandomImages().then((response) => {
             if(response.status === 200){
                 this.setState({
-                    images : response.data["RandomImageCollection"]
+                    images : response.data["randomImageCollection"]
                 }, () => {
                     this.setState({
                         open: true

@@ -73,7 +73,7 @@ export default class Ware extends Component{
             if(response.status === 200){
                 this.setState({
                     hashtagData : response.data["imageData"]["hashtags"],
-                    commentData : response.data["comments"],
+                    commentData : response.data["imageData"]["comments"],
                     imageData :   response.data["imageData"],
                     imageIDPage: queryStringParameters["imageUUID"]
                 }, () => {

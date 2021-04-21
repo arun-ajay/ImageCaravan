@@ -1,4 +1,4 @@
-DROP DATABSE IF EXISTS imagecaravan;
+DROP DATABASE IF EXISTS imagecaravan;
 CREATE DATABASE imagecaravan;
 USE imagecaravan;
 
@@ -8,7 +8,7 @@ CREATE TABLE Users (
   password TEXT NOT NULL,
   bio TEXT,
   location TEXT NOT NULL,
-  profilePicture TEXT,
+  profilePicture LONGTEXT,
   imageList TEXT,
   PRIMARY KEY (id)
 );
@@ -16,7 +16,7 @@ CREATE TABLE Image (
   imageTitle TEXT,
   imageUUID INT AUTO_INCREMENT,
   imageCaption TEXT,
-  imageBase64 TEXT,
+  imageBase64 LONGTEXT,
   imageUploader TEXT,
   visible BOOLEAN DEFAULT '1',
   PRIMARY KEY (imageUUID)
@@ -35,12 +35,16 @@ CREATE TABLE Following (
   following TEXT
 );
 CREATE TABLE ProfileComments (
-  imageUUID INT NOT NULL,
+  id INT AUTO_INCREMENT,
+  profile TEXT NOT NULL,
   comment TEXT,
-  commenter TEXT
+  commenter TEXT,
+  PRIMARY KEY (id)
 );
 CREATE TABLE ImageComments (
+  id INT AUTO_INCREMENT,
   imageUUID INT NOT NULL,
   comment TEXT,
-  commenter TEXT
+  commenter TEXT,
+  PRIMARY KEY (id)
 );
