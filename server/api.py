@@ -5,10 +5,13 @@ import mariadb
 from flask import jsonify, request
 from flask_cors import CORS, cross_origin
 from images import *
+from config import *
 
 app = flask.Flask(__name__)
 CORS(app, support_credentials=False)
 app.config["DEBUG"] = True
+
+configObj = Config()
 
 def build_preflight_response():
     response = make_response()
@@ -23,11 +26,11 @@ def build_actual_response(response):
 
 # configuration used to connect to MariaDB
 config = {
-    'host': '127.0.0.1',
-    'port': 3306,
-    'user': 'root',
-    'password': 'Winxclub1',
-    'database': 'ImageCaravan'
+    'host': configObj.getHost(),
+    'port': configObj.getPort(),
+    'user': configObj.getUser(),
+    'password': configObj.getPassword(),
+    'database': configObj.getData()
 }
 
 #route to get random image collection
@@ -334,16 +337,27 @@ def getimage():
             response["imageData"]["imageBase64"] = dbImageData[3]
             response["imageData"]["imageUploader"] = dbImageData[4]
 
-            cur.execute("select hashtag, count(hashtag) AS CountOf FROM hashtag  WHERE imageUUID = ? GROUP BY hashtag",(imageUUID,))
+            #cur.execute("select hashtag, count(hashtag) AS CountOf FROM hashtag  WHERE imageUUID = ? GROUP BY hashtag",(imageUUID,))
+            cur.execute("SELECT HASHTAG FROM HASHTAG WHERE imageUUID = ?",(imageUUID,))
             hashtagData = cur.fetchall()
 
             hashtagList = []
             for hashtag in hashtagData:
-                tags = {
-                    'hashtag' : hashtag [0],
-                    'imageCount' : hashtag [1]
+                cur.execute("select count(hashtag) AS CountOf FROM hashtag  WHERE hashtag = ? and visible = '1' GROUP BY hashtag",(hashtag[0],))
+                hashtagcount = cur.fetchone()
+
+                tag = {
+                    "hashtag": hashtag[0],
+                    "imageCount": hashtagcount[0]
                 }
-                hashtagList.append(tags)
+                hashtagList.append(tag)
+            
+            # for hashtag in hashtagData:
+            #     tags = {
+            #         'hashtag' : hashtag [0],
+            #         'imageCount' : hashtag [1]
+            #     }
+            #     hashtagList.append(tags)
             response["imageData"]["hashtags"] = hashtagList
 
             #cur.execute("SELECT * FROM profilecomments JOIN users on users.username = profilecomments.commenter where profile = ? ", (username,))
