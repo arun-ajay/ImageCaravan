@@ -376,7 +376,6 @@ export default class SiteHeader extends Component{
 
 
     updateSelection = (e,{value}) => {
-        console.log(value)
         this.props.history.push('/search')
 
     }
@@ -405,7 +404,9 @@ export default class SiteHeader extends Component{
             uploadImage: '',
             uploadHashtags: [],
             uploadTitle:'',
-            uploadCaption: ''
+            uploadCaption: '',
+        }, () => {
+            this.apiGetHashtags()
         })
     }
 
@@ -575,10 +576,22 @@ export default class SiteHeader extends Component{
     }
 
     adjustUploadHashtag = (e,{value}) => {
-        console.log("VALUE UPLOAD",value)
+
         this.setState({
             uploadHashtags: value
         })
+    }
+    
+    addHashtagOption = (e,{value}) => {
+        this.setState((prevState) => ({
+            uploadOptions: [
+                {
+                    key: this.state.uploadOptions.length,
+                    value: value,
+                    text: <span><Icon color = 'orange'  name='hashtag' /> {value} </span>
+                }, ...prevState.uploadOptions
+            ,]
+        }))
     }
 
     
@@ -721,7 +734,7 @@ export default class SiteHeader extends Component{
 
     render () {
 
-        console.log("LOGIN ERROR:",this.state.loginError)
+
 
         if (this.state.redirect){
             if (this.state.searchType && this.state.searchQuery){
@@ -779,7 +792,6 @@ export default class SiteHeader extends Component{
         
 
         if (this.state.visitProfile){
-            console.log(this.state.visitProfile)
             this.setState({
                 visitProfile: false
             }, () => {
@@ -789,9 +801,6 @@ export default class SiteHeader extends Component{
             
         }
         
-        
-
-
         
         return(
             <Grid.Row className = {styles.customRow}>
@@ -822,7 +831,17 @@ export default class SiteHeader extends Component{
                                                     <Form>
                                                         <Form.Field>
                                                             
-                                                            <Form.Dropdown label = '#goods' required clear fluid search multiple allowAdditions selection onChange={this.adjustUploadHashtag} options={this.state.uploadOptions} placeholder='Hashtags' />
+                                                            <Form.Dropdown label = '#goods' required 
+                                                                clear 
+                                                                fluid 
+                                                                search 
+                                                                multiple 
+                                                                allowAdditions 
+                                                                selection 
+                                                                onChange={this.adjustUploadHashtag} 
+                                                                options={this.state.uploadOptions} 
+                                                                onAddItem = {this.addHashtagOption}
+                                                                placeholder='Hashtags' />
                                                             
                                                             <Form.Input required label = "Browse image" type="file" id="file" icon = "image" name="filename" accept="image/*" onChange={(e) => this.onChangeUploadImage(e)} />
                                                             <Form.Input label = 'Image Title' required icon='write' onChange={(e) => this.onChangeUploadTitle(e)} iconPosition='left'  placeholder='Write your image title here' />
