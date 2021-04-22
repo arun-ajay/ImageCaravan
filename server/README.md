@@ -55,9 +55,9 @@ MariaDB [imagecaravan]>
 
 ```
 
-With this `ImageCaravan.sql` file, you are working with an entirely fresh database with new data within the tables. If you don't have a `dump.sql` file, then you can skip to initiating the Python server; however if you do, please follow the next section.
+With this `ImageCaravan.sql` file, you are working with an entirely fresh database with new data within the tables. If you don't have a `dump.sql` file, then you can skip to the Config.json file section
 
-## MariaDB (FOLLOW THIS IF YOU DO HAVE DUMP.SQL FILE)
+## MariaDB *OPTIONAL*
 **Note: Make sure you are using the imagecaravan database**
 
 1. Run the dump.sql file by doing `source dump.sql`
