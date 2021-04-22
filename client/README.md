@@ -2,6 +2,7 @@
 
 ## Overview
 <p> The frontend is designed using React. Users have the capability of uploading images with new/existing hashtags. Users can create accounts. Users are capable of following each other, and commenting on pictures/profiles. All data regarding images/hashtags/accounts are retrieved from the backend via API calls. 
+</p>
 
 ---
 

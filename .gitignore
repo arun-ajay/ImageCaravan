@@ -3,3 +3,5 @@
 test-server/*
 server/__pycache__/*
 server/config.json
+server/env/*
+server/dump.sql
