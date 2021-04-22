@@ -1,0 +1,2 @@
+* linguist-vendored
+/server/images.py linguist-vendored = false
