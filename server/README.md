@@ -92,7 +92,7 @@ A config.json file is required for the server to interact with MariaDB on your l
 **Note: You must have Python 3.6+ installed**
 
 1.  Create your own virtual environment within the same directory as the server folder by running `python3 -m venv env`
-2.  Active your virtual envirnment by running `source env/bin/activate`
+2.  Active your virtual environment by running `source env/bin/activate`
 3.  Now install the necessary packages by running `pip install -r requirements.txt`
 4. Run the server via `python3 api.py`
 
