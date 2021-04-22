@@ -6,7 +6,7 @@ The frontend is designed using React. Users have the capability of uploading ima
 
 
 
-## MariaDB (FOLLOW THIS IF YOU DON'T HAVE A DUMP.SQL FILE)
+## MariaDB *YOU MUST FOLLOW THIS*
 
 **Note: You must have MariaDB installed on your PC.**
 
