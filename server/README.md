@@ -7,7 +7,6 @@ The frontend is designed using React. Users have the capability of uploading ima
 
 
 ## MariaDB (FOLLOW THIS IF YOU DON'T HAVE A DUMP.SQL FILE)
------
 
 **Note: You must have MariaDB installed on your PC.**
 
@@ -59,8 +58,6 @@ MariaDB [imagecaravan]>
 With this `ImageCaravan.sql` file, you are working with an entirely fresh database with new data within the tables. If you don't have a `dump.sql` file, then you can skip to initiating the Python server; however if you do, please follow the next section.
 
 ## MariaDB (FOLLOW THIS IF YOU DO HAVE DUMP.SQL FILE)
------
-
 **Note: Make sure you are using the imagecaravan database**
 
 1. Run the dump.sql file by doing `source dump.sql`
@@ -86,14 +83,12 @@ MariaDB [imagecaravan]>
 ```
 
 ## Config.json setup
------
 A config.json file is required for the server to interact with MariaDB on your local machine. 
 
 1. Rename `config-template.json` to `config.json`
 2. Open the `config.json` file and replace each of the fields with the appropriate credentials for your machine. 
 
 ## Flask (Python) Server Initialization
------
 **Note: You must have Python 3.6+ installed**
 
 1.  Create your own virtual environment within the same directory as the server folder by running `python3 -m venv env`
