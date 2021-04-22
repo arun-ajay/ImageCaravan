@@ -6,7 +6,7 @@ The frontend is designed using React. Users have the capability of uploading ima
 
 
 
-## MariaDB (FOLLOW THIS IF YOU DON'T HAVE A DUMP.SQL FILE)
+## MariaDB *YOU MUST FOLLOW THIS*
 
 **Note: You must have MariaDB installed on your PC.**
 
@@ -55,9 +55,9 @@ MariaDB [imagecaravan]>
 
 ```
 
-With this `ImageCaravan.sql` file, you are working with an entirely fresh database with new data within the tables. If you don't have a `dump.sql` file, then you can skip to initiating the Python server; however if you do, please follow the next section.
+With this `ImageCaravan.sql` file, you are working with an entirely fresh database with new data within the tables. If you don't have a `dump.sql` file, then you can skip to the Config.json file section
 
-## MariaDB (FOLLOW THIS IF YOU DO HAVE DUMP.SQL FILE)
+## MariaDB *OPTIONAL*
 **Note: Make sure you are using the imagecaravan database**
 
 1. Run the dump.sql file by doing `source dump.sql`
@@ -92,7 +92,7 @@ A config.json file is required for the server to interact with MariaDB on your l
 **Note: You must have Python 3.6+ installed**
 
 1.  Create your own virtual environment within the same directory as the server folder by running `python3 -m venv env`
-2.  Active your virtual envirnment by running `source env/bin/activate
+2.  Active your virtual envirnment by running `source env/bin/activate`
 3.  Now install the necessary packages by running `pip install -r requirements.txt`
 4. Run the server via `python3 api.py`
 
