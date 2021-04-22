@@ -1,1 +1,0 @@
-Linguist::FileBlob.new("server/images.py").vendored? # => true
