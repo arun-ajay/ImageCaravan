@@ -111,12 +111,22 @@ export default class Search extends Component{
                             {data["imageCaption"]}
                         </Card.Meta>
                     </Card.Content>
-                    <Card.Content as = 'a' onClick = {() => this.visitProfile(data["imageUploader"])} extra>
-                        <a>
-                            <Icon  name = 'user' />
-                            {data["imageUploader"]}
-                        </a>
-                    </Card.Content>
+                    {
+                        (data["imageUploader"] == "Anonymous") ?
+                        <Card.Content extra>
+                            <span>
+                                <Icon  name = 'user' />
+                                {data["imageUploader"]}
+                            </span>
+                        </Card.Content>
+                        :
+                        <Card.Content as = 'a' onClick = {() => this.visitProfile(data["imageUploader"])} extra>
+                            <a>
+                                <Icon  name = 'user' />
+                                {data["imageUploader"]}
+                            </a>
+                        </Card.Content>
+                    }
                     
                 </Card>
             
