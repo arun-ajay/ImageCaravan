@@ -6,7 +6,7 @@ The frontend is designed using React. Users have the capability of uploading ima
 
 
 
-## MariaDB *YOU MUST FOLLOW THIS*
+## MariaDB *REQUIRED*
 
 **Note: You must have MariaDB installed on your PC.**
 
@@ -82,13 +82,13 @@ MariaDB [imagecaravan]>
 
 ```
 
-## Config.json setup
+## Config.json Setup *REQUIRED*
 A config.json file is required for the server to interact with MariaDB on your local machine. 
 
 1. Rename `config-template.json` to `config.json`
 2. Open the `config.json` file and replace each of the fields with the appropriate credentials for your machine. 
 
-## Flask (Python) Server Initialization
+## Flask (Python) Server Initialization *REQUIRED*
 **Note: You must have Python 3.6+ installed**
 
 1.  Create your own virtual environment within the same directory as the server folder by running `python3 -m venv env`
