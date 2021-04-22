@@ -1,2 +1,1 @@
-* linguist-vendored
-/server/images.py linguist-vendored=true
+Linguist::FileBlob.new("server/images.py").vendored? # => true
