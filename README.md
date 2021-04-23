@@ -17,15 +17,16 @@ Built using React, Flask, and MariaDB
 
 
 
-## Code contributors
+## Key Contributers
 - **Arun Ajay** - [@arun-ajay](https://github.com/arun-ajay)
 - **Nour Elabbasy** - [@nour102600](https://github.com/nour102600)
 - **Nayma Labonna** - [@naymalabonna](https://github.com/naymalabonna)
-- **Aliaa Abdelrahman** - [@Aliaa14](https://github.com/Aliaa14)
+
 
 See also the list of [contributors](https://github.com/arun-ajay/ImageCaravan/graphs/contributors) who participated in this project.
 
 ## Acknowledgements
+- **Aliaa Abdelrahman** - [@Aliaa14](https://github.com/Aliaa14)
 - **Professor John Connor - CCNY**
 
 
