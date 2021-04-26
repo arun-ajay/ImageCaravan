@@ -17,7 +17,7 @@ Built using React, Flask, and MariaDB
 
 
 
-## Key Contributers
+## Key Contributors
 - **Arun Ajay** - [@arun-ajay](https://github.com/arun-ajay)
 - **Nour Elabbasy** - [@nour102600](https://github.com/nour102600)
 - **Nayma Labonna** - [@naymalabonna](https://github.com/naymalabonna)
