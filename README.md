@@ -1,7 +1,8 @@
 # Image Caravan
 
-<img src="https://github.com/arun-ajay/ImageCaravan/blob/master/repoImages/demo.gif" width = "auto" height = "auto"/>
-
+<p align="center">
+  <img src="https://github.com/arun-ajay/ImageCaravan/blob/master/repoImages/demo.gif" width = "auto" height = "auto"/>
+</p
 <p>
 A central hub to share images amongst your peers. Users can post images anonymously or with their own profile.
 Images are organized by hashtags. Users can follow each other, comment on images as well as other profiles.
