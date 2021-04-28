@@ -1,6 +1,6 @@
 # Image Caravan
 
-<image src = "./repoImages/demo.gif" width = "100% height = "auto"/>
+<img src = "./repoImages/demo.gif" width = "100% height = "auto"/>
 
 <p>
 A central hub to share images amongst your peers. Users can post images anonymously or with their own profile.
