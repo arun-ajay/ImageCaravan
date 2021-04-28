@@ -88,6 +88,12 @@ A config.json file is required for the server to interact with MariaDB on your l
 1. Rename `config-template.json` to `config.json`
 2. Open the `config.json` file and replace each of the fields with the appropriate credentials for your machine. 
 
+
+## Images.py Setup *REQUIRED*
+This is a simple function that will return a default image for users who choose not to uploada  profile picture.
+
+1. Open the `images.py` file and replace the return with a string that contains a base 64 of an image you'd like to set as the default profile. 
+
 ## Flask (Python) Server Initialization *REQUIRED*
 **Note: You must have Python 3.6+ installed**
 
