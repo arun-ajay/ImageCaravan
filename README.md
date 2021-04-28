@@ -1,6 +1,6 @@
 # Image Caravan
 
-![demo](https://github.com/arun-ajay/ImageCaravan/blob/master/repoImages/demo.gif)
+<img src="https://github.com/arun-ajay/ImageCaravan/blob/master/repoImages/demo.gif" width = "auto" height = "auto"/>
 
 <p>
 A central hub to share images amongst your peers. Users can post images anonymously or with their own profile.
